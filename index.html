@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL FIT - Онлайн Тренировки и Питание</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <div class="logo-monogram">LF</div>
+                    <div class="logo-text">LEVEL FIT</div>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#home">Главная</a></li>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#subscriptions">Подписки</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="hero-image hero-image-1"></div>
+            <div class="hero-image hero-image-2"></div>
+            <div class="hero-image hero-image-3"></div>
+            <div class="hero-image hero-image-4"></div>
+            <div class="hero-image hero-image-5"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-logo">
+                    <div class="hero-monogram">LF</div>
+                    <div class="hero-text">LEVEL FIT</div>
+                </div>
+                <h1 class="hero-title">Премиум онлайн тренировки<br>и персональное питание</h1>
+                <p class="hero-subtitle">Достигайте своих целей с профессиональными тренерами</p>
+                <a href="#subscriptions" class="btn btn-primary">Выбрать подписку</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Почему LEVEL FIT?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>Профессиональные тренировки</h3>
+                    <p>Эффективные программы от сертифицированных тренеров для любого уровня подготовки</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🥗</div>
+                    <h3>Персональное питание</h3>
+                    <p>Индивидуальные планы питания, разработанные с учетом ваших целей и предпочтений</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍💼</div>
+                    <h3>Поддержка тренера</h3>
+                    <p>Прямая связь с тренером для консультаций, мотивации и корректировки программы</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Доступ 24/7</h3>
+                    <p>Занимайтесь в любое время и в любом месте через наше приложение</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscriptions Section -->
+    <section id="subscriptions" class="subscriptions">
+        <div class="container">
+            <h2 class="section-title">Выберите свою подписку</h2>
+            <p class="section-subtitle">Гибкие тарифы для достижения ваших целей</p>
+            
+            <div class="subscriptions-grid">
+                <!-- Workouts Only -->
+                <div class="subscription-card">
+                    <div class="subscription-badge">Базовый</div>
+                    <h3 class="subscription-title">Тренировки</h3>
+                    <div class="subscription-price">
+                        <span class="price-amount" data-price="1990">1990</span>
+                        <span class="price-currency">₽/мес</span>
+                    </div>
+                    <ul class="subscription-features">
+                        <li>✓ Доступ к библиотеке тренировок</li>
+                        <li>✓ Программы для всех уровней</li>
+                        <li>✓ Видео-инструкции</li>
+                        <li>✓ Трекинг прогресса</li>
+                        <li>✗ План питания</li>
+                        <li>✗ Связь с тренером</li>
+                    </ul>
+                    <button class="btn btn-subscribe" data-plan="workouts">Выбрать план</button>
+                </div>
+
+                <!-- Nutrition Only -->
+                <div class="subscription-card">
+                    <div class="subscription-badge">Питание</div>
+                    <h3 class="subscription-title">Питание</h3>
+                    <div class="subscription-price">
+                        <span class="price-amount" data-price="1490">1490</span>
+                        <span class="price-currency">₽/мес</span>
+                    </div>
+                    <ul class="subscription-features">
+                        <li>✓ Персональный план питания</li>
+                        <li>✓ Рецепты и меню</li>
+                        <li>✓ Калькулятор калорий</li>
+                        <li>✓ Трекинг питания</li>
+                        <li>✗ Тренировки</li>
+                        <li>✗ Связь с тренером</li>
+                    </ul>
+                    <button class="btn btn-subscribe" data-plan="nutrition">Выбрать план</button>
+                </div>
+
+                <!-- Workouts + Nutrition -->
+                <div class="subscription-card featured">
+                    <div class="subscription-badge popular">Популярный</div>
+                    <h3 class="subscription-title">Тренировки + Питание</h3>
+                    <div class="subscription-price">
+                        <span class="price-amount" data-price="2990">2990</span>
+                        <span class="price-currency">₽/мес</span>
+                    </div>
+                    <ul class="subscription-features">
+                        <li>✓ Все из плана "Тренировки"</li>
+                        <li>✓ Все из плана "Питание"</li>
+                        <li>✓ Синхронизация программ</li>
+                        <li>✓ Комплексный подход</li>
+                        <li>✗ Связь с тренером</li>
+                    </ul>
+                    <button class="btn btn-subscribe" data-plan="workouts-nutrition">Выбрать план</button>
+                </div>
+
+                <!-- Premium: All-in-One -->
+                <div class="subscription-card premium">
+                    <div class="subscription-badge premium-badge">Премиум</div>
+                    <h3 class="subscription-title">Всё включено</h3>
+                    <div class="subscription-price">
+                        <span class="price-amount" data-price="4990">4990</span>
+                        <span class="price-currency">₽/мес</span>
+                    </div>
+                    <ul class="subscription-features">
+                        <li>✓ Все из плана "Тренировки + Питание"</li>
+                        <li>✓ Персональная связь с тренером</li>
+                        <li>✓ Еженедельные консультации</li>
+                        <li>✓ Корректировка программы</li>
+                        <li>✓ Приоритетная поддержка</li>
+                        <li>✓ Эксклюзивные материалы</li>
+                    </ul>
+                    <button class="btn btn-subscribe btn-premium" data-plan="premium">Выбрать план</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <div class="container">
+            <h2 class="section-title">Наши результаты</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <div class="gallery-image gallery-1"></div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image gallery-2"></div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image gallery-3"></div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image gallery-4"></div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-image gallery-5"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Начните свой путь сегодня</h2>
+            <p class="section-subtitle">Свяжитесь с нами для получения дополнительной информации</p>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@levelfit.ru</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div>
+                            <h4>Телефон</h4>
+                            <p>+7 (999) 123-45-67</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">💬</div>
+                        <div>
+                            <h4>Telegram</h4>
+                            <p>@levelfit_support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-monogram">LF</div>
+                    <div class="logo-text">LEVEL FIT</div>
+                </div>
+                <p class="footer-text">&copy; 2024 LEVEL FIT. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Subscription -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 class="modal-title">Оформление подписки</h2>
+            <div class="modal-plan-info">
+                <h3 id="modalPlanName"></h3>
+                <p class="modal-price" id="modalPrice"></p>
+            </div>
+            <form id="subscriptionForm" class="subscription-form">
+                <div class="form-group">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Оформить подписку</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
