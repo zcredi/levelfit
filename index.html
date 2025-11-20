@@ -85,43 +85,102 @@
         </div>
     </section>
 
-    <!-- What You Can Buy Section -->
-    <section id="subscriptions" class="what-you-can-buy">
+    <!-- Subscriptions Section -->
+    <section id="subscriptions" class="subscriptions-section">
         <div class="container">
-            <h2 class="section-title">ЧТО ТЫ МОЖЕШЬ КУПИТЬ</h2>
-            <div class="services-grid">
-                <!-- Online Training -->
-                <div class="service-card">
-                    <h3 class="service-title">ОНЛАЙН+ ТРЕНИРОВКИ</h3>
-                    <p class="service-description">
-                        В рамках программы для индивидуальных тренировок вы получите персональную программу, 
-                        адаптированную под ваш уровень и цели.
-                    </p>
-                    <div class="service-price">3890 <span class="currency">₽</span></div>
-                    <button class="btn btn-service" data-plan="workouts"><span>ПОЛУЧИТЬ ПРОГРАММУ</span></button>
+            <h2 class="section-title">ТАРИФЫ ПОДПИСКИ</h2>
+            <div class="subscriptions-grid">
+                <!-- Light Plan -->
+                <div class="subscription-card">
+                    <h3 class="subscription-title">ЛАЙТ</h3>
+                    <div class="subscription-price-wrapper">
+                        <span class="subscription-price-old">$50</span>
+                        <div class="subscription-price">$39</div>
+                    </div>
+                    <div class="subscription-description">
+                        <p class="subscription-subtitle">Кому подойдет этот тариф:</p>
+                        <ul class="subscription-features">
+                            <li>Новичкам, которые только начинают свой путь и хотят "попробовать воду"</li>
+                            <li>Самостоятельным и мотивированным людям, которые уверены в своей дисциплине</li>
+                            <li>Тем, у кого ограниченный бюджет, но есть сильное желание измениться</li>
+                            <li>Клиентам, которые ранее тренировались и хотят вспомнить основы</li>
+                        </ul>
+                        <p class="subscription-subtitle">Что входит в тариф "Лайт":</p>
+                        <ul class="subscription-features">
+                            <li>Готовая, но адаптивная программа тренировок</li>
+                            <li>Программа включает несколько вариантов упражнений (для зала и дома)</li>
+                            <li>Стартовая консультация-анкетирование</li>
+                        </ul>
+                        <p class="subscription-value">Ценность: Я даю тебе всю необходимую базу и карту, а ты идешь по пути сам, зная, что всегда можешь вернуться за более подробной инструкцией.</p>
+                    </div>
+                    <button class="btn btn-service" data-plan="light"><span>ВЫБРАТЬ ТАРИФ</span></button>
                 </div>
 
-                <!-- Nutrition -->
-                <div class="service-card">
-                    <h3 class="service-title">ПИТАНИЕ</h3>
-                    <p class="service-description">
-                        Персональный план питания с расчетом калорий и БЖУ. Ежедневное меню с рецептами 
-                        и рекомендациями по питанию.
-                    </p>
-                    <div class="service-price">2890 <span class="currency">₽</span></div>
-                    <button class="btn btn-service" data-plan="nutrition"><span>ВЫБРАТЬ ПЛАН</span></button>
+                <!-- Start Plan -->
+                <div class="subscription-card">
+                    <h3 class="subscription-title">СТАРТ</h3>
+                    <div class="subscription-price-wrapper">
+                        <span class="subscription-price-old">$90</span>
+                        <div class="subscription-price">$69</div>
+                    </div>
+                    <div class="subscription-description">
+                        <p class="subscription-subtitle">Подходит для:</p>
+                        <p>Начинающих, кто хочет попробовать формат онлайн-тренировок, уверен в своей самодисциплине и ищет бюджетный вариант.</p>
+                        <ul class="subscription-features">
+                            <li>Консультации с тренером: 2 персональные онлайн-консультации в месяц (по 30-45 минут каждая) для постановки целей, коррекции техники и ответов на вопросы</li>
+                            <li>Программа тренировок: Индивидуально подобранная программа тренировок, которая обновляется 1 раз в месяц</li>
+                            <li>Питание: Общие рекомендации по питанию и примерный план рациона</li>
+                        </ul>
+                        <p class="subscription-value">Ценность: Вы получаете фундамент в виде продуманной программы и двух полноценных сессий с тренером, чтобы начать движение к цели.</p>
+                    </div>
+                    <button class="btn btn-service" data-plan="start"><span>ВЫБРАТЬ ТАРИФ</span></button>
                 </div>
 
-                <!-- Premium Package -->
-                <div class="service-card premium-service">
-                    <h3 class="service-title">ПРЕМИУМ ПАКЕТ<br>ТРЕНИРОВКИ + ПИТАНИЕ</h3>
-                    <p class="service-description">
-                        Комплексный подход: персональные тренировки и план питания. 
-                        Связь с тренером, корректировка программы и полная поддержка.
-                    </p>
-                    <div class="service-price">5890 <span class="currency">₽</span></div>
-                    <button class="btn btn-service btn-premium" data-plan="premium"><span>ПОЛУЧИТЬ ДОСТУП</span></button>
-                    <p class="service-note">В программе учтены все нюансы для достижения максимального результата</p>
+                <!-- Optimal Plan (Recommended) -->
+                <div class="subscription-card subscription-recommended">
+                    <div class="recommended-badge">РЕКОМЕНДУЕТСЯ</div>
+                    <h3 class="subscription-title">ОПТИМА</h3>
+                    <div class="subscription-price-wrapper">
+                        <span class="subscription-price-old">$150</span>
+                        <div class="subscription-price">$119</div>
+                    </div>
+                    <div class="subscription-description">
+                        <p class="subscription-subtitle">Идеально для:</p>
+                        <p>Тех, кто настроен серьезно, нуждается в регулярной поддержке и хочет гибкости в общении с тренером в рабочее время.</p>
+                        <ul class="subscription-features">
+                            <li>Персональные онлайн-консультации в месяц с ограничением по времени (только в рабочие часы тренера)</li>
+                            <li>Программа тренировок: Полностью индивидуальная программа тренировок, которая корректируется каждые 2 недели по вашему запросу</li>
+                            <li>Питание: Индивидуальный план питания с учетом ваших предпочтений и целей</li>
+                            <li>Еженедельный контроль результатов (замеры, вес, самочувствие)</li>
+                            <li>Мотивационные челленджи</li>
+                        </ul>
+                        <p class="subscription-value">Ценность: Регулярная поддержка, более частые корректировки программы и оперативная связь в рабочее время для постоянного прогресса.</p>
+                    </div>
+                    <button class="btn btn-service btn-premium" data-plan="optimal"><span>ВЫБРАТЬ ТАРИФ</span></button>
+                </div>
+
+                <!-- VIP Plan (Premium Gold) -->
+                <div class="subscription-card subscription-vip">
+                    <h3 class="subscription-title">ПРЕМИУМ VIP</h3>
+                    <div class="subscription-price-wrapper">
+                        <span class="subscription-price-old">$450</span>
+                        <div class="subscription-price">$299</div>
+                    </div>
+                    <div class="subscription-description">
+                        <p class="subscription-subtitle">Идеально для:</p>
+                        <p>Клиентов, которые ценят максимальное внимание, персональный подход и нуждаются в полном сопровождении без привязки ко времени.</p>
+                        <ul class="subscription-features">
+                            <li>Консультации с тренером: Неограниченное количество консультаций в режиме 24/7 с моментальным ответом. Возможность экстренного видеозвонка для коррекции техники</li>
+                            <li>Программа тренировок: Программа тренировок, которая корректируется еженедельно на основе вашего состояния и прогресса. Полностью адаптивная система</li>
+                            <li>Питание: Детализированный план питания с ежедневными корректировками, поддержкой по готовке и покупкам</li>
+                            <li>Ежедневный анализ дневника питания и самочувствия</li>
+                            <li>Психологическая поддержка и работа с ментальными блоками</li>
+                            <li>Персональные рекомендации по добавкам (при необходимости)</li>
+                            <li>Голые фотки тренера</li>
+                        </ul>
+                        <p class="subscription-value">Ценность: Полное погружение в процесс, ощущение, что тренер всегда на связи. Максимально быстрый результат за счет персонального подхода и круглосуточной поддержки.</p>
+                    </div>
+                    <button class="btn btn-service btn-premium" data-plan="vip"><span>ВЫБРАТЬ ТАРИФ</span></button>
                 </div>
             </div>
         </div>

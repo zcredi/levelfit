@@ -37,20 +37,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Subscription Plans Data
 const plans = {
-    workouts: {
-        name: 'ОНЛАЙН+ ТРЕНИРОВКИ',
-        price: 3890,
-        description: 'Персональная программа тренировок'
+    light: {
+        name: 'ЛАЙТ',
+        price: 39,
+        currency: '$',
+        description: 'Самостоятельный тариф для начинающих'
     },
-    nutrition: {
-        name: 'ПИТАНИЕ',
-        price: 2890,
-        description: 'Персональный план питания'
+    start: {
+        name: 'СТАРТ',
+        price: 69,
+        currency: '$',
+        description: 'Для начинающих с поддержкой тренера'
     },
-    premium: {
-        name: 'ПРЕМИУМ ПАКЕТ ТРЕНИРОВКИ + ПИТАНИЕ',
-        price: 5890,
-        description: 'Комплексный подход с поддержкой тренера'
+    optimal: {
+        name: 'ОПТИМА',
+        price: 119,
+        currency: '$',
+        description: 'Рекомендуемый тариф с регулярной поддержкой'
+    },
+    vip: {
+        name: 'ПРЕМИУМ VIP',
+        price: 299,
+        currency: '$',
+        description: 'Максимальное внимание и поддержка 24/7'
     }
 };
 
@@ -69,7 +78,7 @@ document.querySelectorAll('.btn-service').forEach(button => {
         
         if (plan && modal && modalPlanName && modalPrice) {
             modalPlanName.textContent = plan.name;
-            modalPrice.textContent = `${plan.price} ₽`;
+            modalPrice.textContent = `${plan.price} ${plan.currency || '$'}`;
             if (subscriptionForm) {
                 subscriptionForm.setAttribute('data-plan', planId);
             }
