@@ -1048,21 +1048,30 @@ body::before {
 
 .subscription-features li {
     padding: 0.5rem 0;
-    padding-left: 1.5rem;
+    padding-left: 0;
     position: relative;
     color: var(--text-gray);
     line-height: 1.6;
     font-size: 12.5px;
     font-family: 'Montserrat', sans-serif;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
 }
 
 .subscription-features li::before {
     content: '✓';
-    position: absolute;
-    left: 0;
     color: var(--gold);
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.1rem;
+    line-height: 1;
 }
 
 .subscription-value {
