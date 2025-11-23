@@ -208,6 +208,41 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
     
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    if (faqItems.length) {
+        faqItems.forEach(item => {
+            const questionButton = item.querySelector('.faq-question');
+            const answer = item.querySelector('.faq-answer');
+
+            if (questionButton && answer) {
+                questionButton.addEventListener('click', () => {
+                    const isExpanded = questionButton.getAttribute('aria-expanded') === 'true';
+
+                    faqItems.forEach(otherItem => {
+                        if (otherItem === item) {
+                            return;
+                        }
+                        const otherButton = otherItem.querySelector('.faq-question');
+                        const otherAnswer = otherItem.querySelector('.faq-answer');
+                        if (otherButton && otherAnswer) {
+                            otherItem.classList.remove('active');
+                            otherButton.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    if (!isExpanded) {
+                        item.classList.add('active');
+                        questionButton.setAttribute('aria-expanded', 'true');
+                    } else {
+                        item.classList.remove('active');
+                        questionButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        });
+    }
+    
     // Parallax effect for hero image
     const heroImage = document.querySelector('.hero-image-container');
     if (heroImage) {

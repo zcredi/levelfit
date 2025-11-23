@@ -1291,6 +1291,349 @@ body::before {
     box-shadow: var(--shadow-card), 0 0 60px rgba(255, 215, 0, 0.3);
 }
 
+/* Trainer Section */
+.trainer-section {
+    padding: 110px 0;
+    background: var(--dark);
+    position: relative;
+}
+
+.trainer-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 90% 10%, rgba(255, 107, 107, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.trainer-wrapper {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.trainer-content {
+    background: rgba(20, 20, 31, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.trainer-badge {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gold);
+    padding: 0.8rem 1.6rem;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 999px;
+    width: fit-content;
+    background: rgba(255, 215, 0, 0.08);
+}
+
+.trainer-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1.2;
+    color: var(--text-light);
+}
+
+.trainer-text {
+    color: var(--text-gray);
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.trainer-lists {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.trainer-list-block h3 {
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.trainer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.trainer-list li {
+    position: relative;
+    color: var(--text-gray);
+    padding-left: 1.5rem;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.trainer-list li::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    position: absolute;
+    left: 0;
+    top: 0.6rem;
+}
+
+.trainer-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.trainer-meta-item {
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 18px;
+    padding: 1.8rem;
+}
+
+.meta-label {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.trainer-meta-item p {
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.trainer-cta {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+.trainer-panel {
+    position: relative;
+    border-radius: 30px;
+    padding: 3rem;
+    border: 2px solid rgba(255, 215, 0, 0.35);
+    min-height: 420px;
+    background-image: url('images/trainer-denis.jpg');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.trainer-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(5, 5, 10, 0.9) 0%, rgba(5, 5, 10, 0.65) 40%, rgba(5, 5, 10, 0.15) 100%);
+}
+
+.trainer-panel-content {
+    position: relative;
+    z-index: 1;
+    background: rgba(5, 5, 10, 0.55);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--text-light);
+    max-width: 520px;
+}
+
+.panel-quote {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.7;
+}
+
+.panel-divider {
+    height: 1px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.panel-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.panel-list li {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.85);
+    padding-left: 1.2rem;
+    position: relative;
+}
+
+.panel-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    position: absolute;
+    left: 0;
+    top: 0.65rem;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 140px 0;
+    background: var(--dark-secondary);
+    position: relative;
+}
+
+.faq-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.faq-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+    align-items: flex-start;
+}
+
+.faq-item {
+    background: rgba(20, 20, 31, 0.85);
+    border: 2px solid rgba(255, 215, 0, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1 1 calc(50% - 0.75rem);
+}
+
+.faq-item:hover {
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+.faq-item.active {
+    border-color: var(--gold);
+    box-shadow: 0 25px 70px rgba(255, 215, 0, 0.15);
+}
+
+.faq-question {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 1.4rem 2rem 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    cursor: pointer;
+}
+
+.faq-question-text {
+    flex: 1;
+    font-size: 18px;
+    letter-spacing: 0;
+    line-height: 1.5;
+    text-transform: none;
+    text-align: left;
+}
+
+.faq-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faq-icon::before {
+    content: '+';
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.faq-item.active .faq-icon {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.faq-item.active .faq-icon::before {
+    content: '−';
+    color: var(--dark);
+}
+
+.faq-answer {
+    padding: 0 2rem;
+    border-top: 1px solid rgba(255, 215, 0, 0.08);
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease, padding-bottom 0.3s ease;
+    opacity: 0;
+}
+
+.faq-answer-content {
+    overflow: hidden;
+    padding-top: 0.5rem;
+    padding-bottom: 0.2rem;
+}
+
+.faq-item.active .faq-answer {
+    grid-template-rows: 1fr;
+    padding-bottom: 0.7rem;
+    opacity: 1;
+}
+
+.faq-answer p {
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.8;
+    margin: 0;
+}
+
 /* Footer */
 .footer {
     background: var(--dark-secondary);
@@ -1543,6 +1886,14 @@ body::before {
     .divider-arrow {
         font-size: 24px;
     }
+
+    .trainer-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .trainer-panel {
+        order: -1;
+    }
 }
 
 @media (max-width: 968px) {
@@ -1703,6 +2054,31 @@ body::before {
     .subscription-vip {
         grid-column: 1;
     }
+
+    .trainer-lists {
+        grid-template-columns: 1fr;
+    }
+
+    .trainer-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .trainer-panel {
+        padding: 2.5rem;
+        min-height: 420px;
+    }
+
+    .faq-grid {
+        flex-direction: column;
+    }
+
+    .faq-item {
+        flex-basis: 100%;
+    }
+
+    .faq-question {
+        padding: 1.5rem;
+    }
 }
 
 @media (max-width: 640px) {
@@ -1740,5 +2116,26 @@ body::before {
     .process-step {
         flex-direction: column;
         gap: 1.5rem;
+    }
+
+    .trainer-content,
+    .trainer-panel {
+        padding: 2.2rem;
+    }
+
+    .trainer-panel {
+        min-height: 360px;
+    }
+
+    .panel-quote {
+        font-size: 18px;
+    }
+
+    .faq-question-text {
+        font-size: 16px;
+    }
+
+    .faq-answer p {
+        font-size: 14px;
     }
 }
