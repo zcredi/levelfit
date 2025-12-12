@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 # Токен бота
 BOT_TOKEN = os.getenv('BOT_TOKEN', '8029053288:AAHZdSBMbp_1bEr8DgU_n6qrxl6kkkVuScc')
 ADMIN_TELEGRAM_ID = os.getenv('ADMIN_TELEGRAM_ID')
+CHANNEL_ID = os.getenv('CHANNEL_ID')  # ID канала для заявок
 
 # Создаем бота и диспетчер
 bot = Bot(token=BOT_TOKEN)
@@ -212,16 +213,19 @@ async def process_contact(callback: types.CallbackQuery):
         await callback.message.answer(text)
         await callback.answer("✅ Контакты отправлены!")
         
-        # Уведомление админу
+        # Уведомление админу и в канал
+        admin_text = f"📞 ЗАПРОС НА СВЯЗЬ\n\n"
+        admin_text += f"👤 {callback.from_user.full_name}\n"
+        admin_text += f"🆔 {callback.from_user.id}\n"
+        admin_text += f"📦 Тариф: {plan['name']}\n"
+        admin_text += f"💵 ${plan['price']}\n"
+        admin_text += f"🔗 @{callback.from_user.username or 'нет'}"
+        
         if ADMIN_TELEGRAM_ID:
-            admin_text = f"📞 ЗАПРОС НА СВЯЗЬ\n\n"
-            admin_text += f"👤 {callback.from_user.full_name}\n"
-            admin_text += f"🆔 {callback.from_user.id}\n"
-            admin_text += f"📦 Тариф: {plan['name']}\n"
-            admin_text += f"💵 ${plan['price']}\n"
-            admin_text += f"🔗 @{callback.from_user.username or 'нет'}"
-            
             await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
+        
+        if CHANNEL_ID:
+            await bot.send_message(CHANNEL_ID, admin_text)
             
     except Exception as e:
         logger.error(f"Ошибка в process_contact: {e}", exc_info=True)
@@ -247,16 +251,19 @@ async def process_order(callback: types.CallbackQuery):
         await callback.message.answer(text)
         await callback.answer("✅ Отправьте данные!")
         
-        # Уведомление админу
+        # Уведомление админу и в канал
+        admin_text = f"📋 НОВАЯ ЗАЯВКА\n\n"
+        admin_text += f"👤 {callback.from_user.full_name}\n"
+        admin_text += f"🆔 {callback.from_user.id}\n"
+        admin_text += f"📦 Тариф: {plan['name']}\n"
+        admin_text += f"💵 ${plan['price']}\n"
+        admin_text += f"⏳ Ожидает данных..."
+        
         if ADMIN_TELEGRAM_ID:
-            admin_text = f"📋 НОВАЯ ЗАЯВКА\n\n"
-            admin_text += f"👤 {callback.from_user.full_name}\n"
-            admin_text += f"🆔 {callback.from_user.id}\n"
-            admin_text += f"📦 Тариф: {plan['name']}\n"
-            admin_text += f"💵 ${plan['price']}\n"
-            admin_text += f"⏳ Ожидает данных..."
-            
             await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
+        
+        if CHANNEL_ID:
+            await bot.send_message(CHANNEL_ID, admin_text)
             
     except Exception as e:
         logger.error(f"Ошибка в process_order: {e}", exc_info=True)
@@ -277,16 +284,22 @@ async def handle_text(message: types.Message):
         
         await message.answer(text)
         
-        # Админу
+        # Админу и в канал
+        admin_text = f"📨 НОВАЯ ЗАЯВКА!\n\n"
+        admin_text += f"👤 {message.from_user.full_name}\n"
+        admin_text += f"🆔 {message.from_user.id}\n"
+        admin_text += f"🔗 @{message.from_user.username or 'нет'}\n\n"
+        admin_text += f"📝 Данные:\n{message.text}"
+        
+        # Отправка админу (в личку)
         if ADMIN_TELEGRAM_ID:
-            admin_text = f"📨 НОВАЯ ЗАЯВКА!\n\n"
-            admin_text += f"👤 {message.from_user.full_name}\n"
-            admin_text += f"🆔 {message.from_user.id}\n"
-            admin_text += f"🔗 @{message.from_user.username or 'нет'}\n\n"
-            admin_text += f"📝 Данные:\n{message.text}"
-            
             await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
             logger.info(f"Уведомление отправлено админу {ADMIN_TELEGRAM_ID}")
+        
+        # Отправка в канал (для истории)
+        if CHANNEL_ID:
+            await bot.send_message(CHANNEL_ID, admin_text)
+            logger.info(f"Заявка сохранена в канал {CHANNEL_ID}")
             
     except Exception as e:
         logger.error(f"Ошибка в handle_text: {e}", exc_info=True)
@@ -326,6 +339,7 @@ async def main():
     logger.info("🤖 LEVEL FIT БОТ ЗАПУСКАЕТСЯ...")
     logger.info(f"Bot Token: {BOT_TOKEN[:20]}...")
     logger.info(f"Admin ID: {ADMIN_TELEGRAM_ID or 'НЕ УКАЗАН'}")
+    logger.info(f"Channel ID: {CHANNEL_ID or 'НЕ УКАЗАН'}")
     logger.info("="*50)
     
     try:
