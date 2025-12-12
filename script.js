@@ -1,3 +1,19 @@
+// Disable right-click on images
+document.addEventListener('DOMContentLoaded', () => {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        img.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+    });
+});
+
 // Mobile Menu Toggle
 const menuToggle = document.querySelector('.menu-toggle');
 const navMenu = document.querySelector('.nav-menu-left');
@@ -7,6 +23,19 @@ if (menuToggle && navMenu) {
         navMenu.classList.toggle('active');
     });
 }
+
+// Support Button - Open Crisp Chat
+const supportBtn = document.getElementById('supportBtn');
+if (supportBtn) {
+    supportBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Open Crisp chat
+        if (window.$crisp) {
+            window.$crisp.push(['do', 'chat:open']);
+        }
+    });
+}
+
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-menu a').forEach(link => {
@@ -18,21 +47,56 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
 });
 
 // Smooth Scrolling
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const target = document.querySelector(targetId);
-        if (target) {
-            const offsetTop = target.offsetTop - 100;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Skip support button and premium button (для премиума есть свой обработчик)
+        if (anchor.id === 'supportBtn' || anchor.classList.contains('nav-link-premium')) {
+            return;
         }
+        
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const target = document.querySelector(targetId);
+            
+            if (target) {
+                const top = target.getBoundingClientRect().top + window.pageYOffset - 120;
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
+
+    // Premium Account Button - Scroll to VIP Plan
+    const premiumBtn = document.querySelector('.nav-link-premium');
+    if (premiumBtn) {
+        premiumBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const vipPlan = document.getElementById('vip-plan');
+            if (vipPlan) {
+                // Рассчитываем позицию с учётом текущего скролла
+                const top = vipPlan.getBoundingClientRect().top + window.pageYOffset - 120;
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth'
+                });
+
+                // Подсветка карточки
+                setTimeout(() => {
+                    vipPlan.style.transition = 'transform 0.6s ease';
+                    vipPlan.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        vipPlan.style.transform = 'scale(1)';
+                    }, 600);
+                }, 400);
+            }
+        });
+    }
 });
 
 // Subscription Plans Data
@@ -142,33 +206,62 @@ if (subscriptionForm) {
     });
 }
 
-// Handle Goal Selection Form
-const goalForm = document.querySelector('.goal-form');
-if (goalForm) {
-    goalForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const selectedGoal = goalForm.querySelector('input[name="goal"]:checked');
-        if (selectedGoal) {
-            const goalText = selectedGoal.closest('.radio-label').querySelector('.radio-text').textContent;
+// Visual Goal Cards Selection with Highlight Effect
+document.addEventListener('DOMContentLoaded', () => {
+    const goalCards = document.querySelectorAll('.goal-card');
+    const heroImageContainer = document.getElementById('heroImageContainer');
+    const heroCta = document.getElementById('heroCtaBtn');
+    let selectedGoal = null;
+    
+    goalCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const goal = card.dataset.goal;
             
-            // Scroll to subscriptions section
+            // Toggle selection
+            if (card.classList.contains('selected')) {
+                card.classList.remove('selected');
+                selectedGoal = null;
+                
+                // Remove highlight
+                if (heroImageContainer) {
+                    heroImageContainer.classList.remove('highlight');
+                }
+            } else {
+                // Remove selection from all cards
+                goalCards.forEach(c => c.classList.remove('selected'));
+                
+                // Select current card
+                card.classList.add('selected');
+                selectedGoal = goal;
+                
+                // Apply highlight
+                if (heroImageContainer) {
+                    heroImageContainer.classList.add('highlight');
+                }
+            }
+        });
+    });
+    
+    // CTA Button click
+    if (heroCta) {
+        heroCta.addEventListener('click', (e) => {
+            if (selectedGoal) {
+                console.log('Selected goal:', selectedGoal);
+            }
+            
+            // Scroll to subscriptions
             const subscriptionsSection = document.getElementById('subscriptions');
             if (subscriptionsSection) {
+                e.preventDefault();
                 const offsetTop = subscriptionsSection.offsetTop - 100;
                 window.scrollTo({
                     top: offsetTop,
                     behavior: 'smooth'
                 });
             }
-            
-            // You can store the selected goal for later use
-            console.log('Selected goal:', goalText);
-        } else {
-            alert('Пожалуйста, выберите цель');
-        }
-    });
-}
+        });
+    }
+});
 
 // Navbar Background on Scroll
 window.addEventListener('scroll', () => {
@@ -199,7 +292,7 @@ const observer = new IntersectionObserver((entries) => {
 
 // Observe elements for animation
 document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll('.service-card, .process-step, .goal-selection, .hero-content, .hero-image-container');
+    const animatedElements = document.querySelectorAll('.service-card, .process-step, .hero-content-side, .hero-image-side, .subscription-card');
     
     animatedElements.forEach((el, index) => {
         el.style.opacity = '0';
@@ -243,9 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Parallax effect for hero image
-    const heroImage = document.querySelector('.hero-image-container');
-    if (heroImage) {
+    // Parallax effect for hero image container
+    const heroImageContainer = document.querySelector('.hero-image-container');
+    if (heroImageContainer) {
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) {
@@ -255,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (heroSection) {
                         const heroHeight = heroSection.offsetHeight;
                         if (scrolled < heroHeight) {
-                            const rate = scrolled * 0.2;
-                            heroImage.style.transform = `translateY(${rate}px)`;
+                            const rate = scrolled * 0.15;
+                            heroImageContainer.style.transform = `translateY(${rate}px)`;
                         }
                     }
                     ticking = false;
@@ -265,6 +358,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // Add hover effect to goal cards
+    const goalCardsHover = document.querySelectorAll('.goal-card');
+    goalCardsHover.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            const icon = card.querySelector('.goal-card-icon');
+            if (icon && !card.classList.contains('selected')) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            const icon = card.querySelector('.goal-card-icon');
+            if (icon && !card.classList.contains('selected')) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
 });
 
 // Service Card Hover Effects
@@ -282,19 +393,6 @@ document.querySelectorAll('.service-card').forEach(card => {
         if (priceElement) {
             priceElement.style.transform = 'scale(1)';
         }
-    });
-});
-
-// Radio Button Custom Styling
-document.querySelectorAll('.radio-input').forEach(radio => {
-    radio.addEventListener('change', function() {
-        // Remove checked state from all radios in the same group
-        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
-            r.closest('.radio-label').classList.remove('selected');
-        });
-        
-        // Add selected class to current radio
-        this.closest('.radio-label').classList.add('selected');
     });
 });
 

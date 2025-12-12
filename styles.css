@@ -39,6 +39,26 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Disable image downloading and selection */
+img {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+/* Re-enable pointer events for parent containers */
+.result-image-container,
+.hero-image-container,
+.trainer-panel {
+    pointer-events: auto;
+}
+
 /* Animated Background Particles */
 body::before {
     content: '';
@@ -147,6 +167,8 @@ body::before {
     gap: 16px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
 }
 
 .logo:hover {
@@ -207,9 +229,25 @@ body::before {
     gap: 2.5rem;
     flex: 1;
     justify-content: flex-end;
+    align-items: center;
 }
 
-.nav-link-premium,
+.nav-link-premium {
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    padding: 0.7rem 1.8rem;
+    border-radius: 30px;
+    border: 2px solid var(--gold);
+    background: var(--gradient-primary);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    animation: premiumPulse 3s ease-in-out infinite;
+}
+
 .nav-link-support {
     color: var(--text-light);
     text-decoration: none;
@@ -224,7 +262,21 @@ body::before {
     background: rgba(255, 215, 0, 0.05);
 }
 
-.nav-link-premium:hover,
+@keyframes premiumPulse {
+    0%, 100% { 
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    }
+    50% { 
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+    }
+}
+
+.nav-link-premium:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(255, 215, 0, 0.5);
+    border-color: var(--gold-light);
+}
+
 .nav-link-support:hover {
     color: var(--dark);
     background: var(--gradient-primary);
@@ -253,7 +305,7 @@ body::before {
 
 /* Hero Section - Bold & Dynamic */
 .hero {
-    padding: 200px 0 150px;
+    padding: 140px 0 100px;
     background: var(--dark);
     position: relative;
     overflow: hidden;
@@ -262,93 +314,149 @@ body::before {
     align-items: center;
 }
 
-.hero::after {
-    content: '';
+/* Animated Background Effects */
+.hero-bg-effects {
     position: absolute;
     top: 0;
-    right: 0;
-    width: 50%;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
 }
 
+.hero-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    animation: glowPulse 8s ease-in-out infinite;
+}
+
+.hero-glow-1 {
+    top: 10%;
+    left: 10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+}
+
+.hero-glow-2 {
+    bottom: 20%;
+    right: 15%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.3) 0%, transparent 70%);
+    animation-delay: 2s;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+        opacity: 0.15;
+    }
+    50% {
+        transform: scale(1.2) translateY(-20px);
+        opacity: 0.25;
+    }
+}
+
+/* Hero Wrapper */
 .hero-wrapper {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 80px;
     align-items: center;
     position: relative;
     z-index: 1;
 }
 
+/* Left Side - Content */
+.hero-content-side {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* Right Side - Image */
+.hero-image-side {
+    position: relative;
+    overflow: visible;
+}
+
+
 .hero-image-container {
     position: relative;
     height: 700px;
-    border-radius: 24px;
+    border-radius: 30px;
     overflow: hidden;
-    border: 3px solid rgba(255, 215, 0, 0.2);
-    box-shadow: var(--shadow-card), 0 0 60px rgba(255, 215, 0, 0.2);
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.2);
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero-image-container::before {
+.hero-image-container.highlight {
+    border-color: rgba(255, 215, 0, 0.7);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 90px rgba(255, 215, 0, 0.35), 0 0 140px rgba(255, 215, 0, 0.25);
+    animation: highlightPulse 1.4s ease-in-out;
+}
+
+@keyframes highlightPulse {
+    0% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.2); }
+    50% { box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 110px rgba(255, 215, 0, 0.4); }
+    100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.2); }
+}
+
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1.1);
+}
+
+.hero-image.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hero-image::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 60%);
     z-index: 1;
-    pointer-events: none;
 }
 
-.hero-image-container:hover {
-    box-shadow: var(--shadow-card), 0 0 80px rgba(255, 215, 0, 0.4);
-    border-color: rgba(255, 215, 0, 0.5);
-}
 
-.hero-image-main {
-    width: 100%;
-    height: 100%;
-    background-image: url('images/hero-1.jpg');
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hero-image-container:hover .hero-image-main {
-    transform: scale(1.1);
-}
-
-.hero-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-.hero-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-}
 
 .hero-badge {
-    font-size: 12px;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-weight: 700;
-    padding: 0.8rem 1.8rem;
-    background: rgba(255, 215, 0, 0.1);
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    font-size: 14px;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    font-weight: 500;
+    padding: 0.7rem 1.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     display: inline-block;
     width: fit-content;
     backdrop-filter: blur(10px);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.hero-badge:hover {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
 }
 
 .hero-title {
@@ -372,129 +480,192 @@ body::before {
 }
 
 .hero-description {
-    font-size: 18px;
+    font-size: 19px;
     color: var(--text-gray);
-    line-height: 1.9;
+    line-height: 1.7;
     max-width: 550px;
     font-weight: 400;
     letter-spacing: 0.3px;
 }
 
-.hero-note {
-    font-size: 14px;
-    color: var(--text-gray);
-    margin-top: -1rem;
-    font-style: italic;
-    opacity: 0.8;
+/* Visual Goal Cards */
+.goal-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 1rem;
 }
 
-/* Goal Selection - Modern Card */
-.goal-selection {
-    padding: 3rem;
-    background: rgba(30, 30, 46, 0.8);
-    backdrop-filter: blur(30px) saturate(180%);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
+.goal-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.8rem 2rem;
+    background: rgba(30, 30, 46, 0.6);
+    backdrop-filter: blur(20px);
     border: 2px solid rgba(255, 215, 0, 0.2);
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.goal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: var(--gradient-primary);
+    opacity: 0.1;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+}
+
+.goal-card:hover {
+    transform: translateX(10px);
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+}
+
+.goal-card:hover::before {
     width: 100%;
 }
 
-.goal-selection:hover {
-    border-color: rgba(255, 215, 0, 0.5);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.2);
-    transform: translateY(-5px);
+.goal-card.selected {
+    border-color: var(--gold);
+    background: rgba(255, 215, 0, 0.12);
+    box-shadow: 0 15px 50px rgba(255, 215, 0, 0.3);
 }
 
-.goal-title {
+.goal-card.selected::before {
+    width: 100%;
+}
+
+.goal-card-icon {
+    font-size: 42px;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 16px;
+    flex-shrink: 0;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.goal-card:hover .goal-card-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.goal-card.selected .goal-card-icon {
+    background: var(--gradient-primary);
+    transform: scale(1.15);
+}
+
+.goal-card-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.goal-card-title {
     font-size: 20px;
     font-weight: 700;
-    color: var(--gold);
-    margin-bottom: 2.5rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    color: var(--text-light);
+    margin-bottom: 0.3rem;
     font-family: 'Space Grotesk', sans-serif;
 }
 
-.goal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.goal-card-desc {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin: 0;
 }
 
-.radio-label {
+.goal-card-check {
+    width: 32px;
+    height: 32px;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 16px;
-    cursor: pointer;
-    padding: 1.2rem;
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.radio-label:hover {
-    background: rgba(255, 215, 0, 0.08);
-    border-color: rgba(255, 215, 0, 0.3);
-    transform: translateX(8px);
-}
-
-.radio-input {
-    display: none;
-}
-
-.radio-custom {
-    width: 24px;
-    height: 24px;
-    border: 3px solid var(--gold);
-    border-radius: 50%;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--gold);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    flex-shrink: 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    z-index: 1;
 }
 
-.radio-label:hover .radio-custom {
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-    transform: scale(1.1);
-}
-
-.radio-input:checked + .radio-custom {
-    border-color: var(--gold-light);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+.goal-card.selected .goal-card-check {
+    opacity: 1;
+    transform: scale(1);
     background: var(--gradient-primary);
+    border-color: var(--gold);
+    color: var(--dark);
+    font-weight: 700;
 }
 
-.radio-input:checked + .radio-custom::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    background: var(--dark);
-    border-radius: 50%;
+/* Floating Badges */
+.hero-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
 }
 
-.radio-label.selected {
-    background: rgba(255, 215, 0, 0.15);
-    border-left: 4px solid var(--gold);
-    border-color: rgba(255, 215, 0, 0.4);
+.hero-badge-card {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    background: rgba(20, 20, 31, 0.85);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px);
 }
 
-.radio-text {
+.hero-badge-card .badge-icon {
+    font-size: 24px;
+}
+
+.hero-badge-card .badge-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.hero-badge-card .badge-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
     color: var(--text-light);
-    font-size: 17px;
-    font-weight: 500;
 }
 
-.btn-goal {
-    margin-top: 1rem;
-    width: 100%;
+.hero-badge-card .badge-sub {
+    font-size: 12px;
+    color: var(--text-gray);
+    line-height: 1.5;
 }
+
+/* Hero CTA Button */
+.btn-hero {
+    margin-top: 1rem;
+    padding: 22px 50px;
+    font-size: 15px;
+    width: fit-content;
+}
+
 
 /* Buttons - Premium Design */
 .btn {
@@ -1411,6 +1582,7 @@ body::before {
     position: relative;
     grid-column: 1 / -1;
     max-width: 100%;
+    scroll-margin-top: 120px;
 }
 
 .subscription-vip::after {
@@ -2122,6 +2294,22 @@ body::before {
         gap: 60px;
     }
     
+    .hero-image-container {
+        height: 600px;
+    }
+    
+    .hero-badges {
+        grid-template-columns: 1fr;
+    }
+    
+    .floating-badge {
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .floating-badge .badge-text {
+        font-size: 12px;
+    }
+    
     .process-wrapper {
         gap: 60px;
     }
@@ -2239,7 +2427,7 @@ body::before {
     }
     
     .hero {
-        padding: 160px 0 100px;
+        padding: 140px 0 80px;
         min-height: auto;
     }
     
@@ -2248,16 +2436,46 @@ body::before {
         gap: 50px;
     }
     
+    .hero-image-side {
+        order: 0;
+    }
+    
+    .hero-content-side {
+        order: 1;
+    }
+    
     .hero-image-container {
         height: 500px;
+    }
+
+    .hero-badges {
+        grid-template-columns: 1fr;
     }
     
     .hero-title {
         font-size: 48px;
     }
     
-    .hero-content-wrapper {
-        gap: 30px;
+    .goal-cards {
+        gap: 1rem;
+    }
+    
+    .goal-card {
+        padding: 1.5rem;
+    }
+    
+    .goal-card-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 36px;
+    }
+    
+    .goal-card-title {
+        font-size: 18px;
+    }
+    
+    .floating-badge {
+        display: none;
     }
     
     .services-grid {
@@ -2373,17 +2591,50 @@ body::before {
         grid-column: 1;
     }
 
+    .trainer-section {
+        padding: 70px 0;
+    }
+
+    .trainer-wrapper {
+        gap: 30px;
+    }
+
     .trainer-lists {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .trainer-meta {
         grid-template-columns: 1fr;
+        gap: 1.2rem;
     }
 
     .trainer-panel {
         padding: 2.5rem;
-        min-height: 420px;
+        min-height: 400px;
+    }
+
+    .trainer-title {
+        font-size: 34px;
+        line-height: 1.3;
+    }
+
+    .trainer-text {
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .trainer-content {
+        padding: 2.8rem;
+        gap: 1.8rem;
+    }
+
+    .trainer-list-block h3 {
+        font-size: 15px;
+    }
+
+    .panel-quote {
+        font-size: 19px;
     }
 
     .faq-grid {
@@ -2404,8 +2655,51 @@ body::before {
         padding: 0 20px;
     }
     
+    .hero {
+        padding: 120px 0 60px;
+    }
+    
     .hero-title {
         font-size: 36px;
+    }
+    
+    .hero-description {
+        font-size: 16px;
+    }
+    
+    .hero-image-container {
+        height: 400px;
+    }
+    
+    .goal-card {
+        padding: 1.2rem 1.5rem;
+        gap: 1.2rem;
+    }
+    
+    .goal-card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 28px;
+    }
+    
+    .goal-card-title {
+        font-size: 16px;
+    }
+    
+    .goal-card-desc {
+        font-size: 12px;
+    }
+    
+    .goal-card-check {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    .btn-hero {
+        width: 100%;
+        padding: 18px 40px;
+        font-size: 14px;
     }
     
     .section-title {
@@ -2436,17 +2730,106 @@ body::before {
         gap: 1.5rem;
     }
 
-    .trainer-content,
-    .trainer-panel {
-        padding: 2.2rem;
+    .trainer-section {
+        padding: 60px 0;
     }
 
+    .trainer-wrapper {
+        gap: 25px;
+    }
+
+    .trainer-content {
+        padding: 2rem;
+        gap: 1.5rem;
+        border-radius: 20px;
+    }
+    
     .trainer-panel {
-        min-height: 360px;
+        padding: 2rem;
+        min-height: 350px;
+        border-radius: 20px;
+    }
+
+    .trainer-title {
+        font-size: 26px;
+        line-height: 1.35;
+    }
+
+    .trainer-text {
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .trainer-badge {
+        font-size: 11px;
+        padding: 0.65rem 1.3rem;
+        letter-spacing: 1.8px;
+    }
+
+    .trainer-lists {
+        gap: 1.8rem;
+    }
+
+    .trainer-list-block h3 {
+        font-size: 14px;
+        margin-bottom: 0.9rem;
+        letter-spacing: 1.5px;
+    }
+
+    .trainer-list {
+        gap: 0.7rem;
+    }
+
+    .trainer-list li {
+        font-size: 13.5px;
+        line-height: 1.65;
+    }
+
+    .trainer-meta {
+        gap: 1.2rem;
+    }
+
+    .trainer-meta-item {
+        padding: 1.5rem;
+        border-radius: 14px;
+    }
+
+    .meta-label {
+        font-size: 19px;
+    }
+
+    .trainer-meta-item p {
+        font-size: 13.5px;
+        line-height: 1.5;
     }
 
     .panel-quote {
-        font-size: 18px;
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    .panel-list {
+        gap: 0.75rem;
+    }
+
+    .panel-list li {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .trainer-panel-content {
+        padding: 2rem;
+        gap: 1.3rem;
+        border-radius: 18px;
+    }
+
+    .trainer-cta {
+        width: 100%;
+    }
+
+    .trainer-cta span {
+        display: block;
+        text-align: center;
     }
 
     .faq-question-text {

@@ -17,20 +17,21 @@
         <div class="container">
             <div class="nav-content">
                 <ul class="nav-menu nav-menu-left">
-                    <li><a href="#home">ТРЕНИРОВКИ</a></li>
-                    <li><a href="#subscriptions">ПИТАНИЕ</a></li>
-                    <li><a href="#how-it-works">КОНТАКТЫ</a></li>
-                    <li><a href="#about">О ПРОЕКТЕ</a></li>
+                    <li><a href="#home">ГЛАВНАЯ</a></li>
+                    <li><a href="#about">О ТРЕНЕРЕ</a></li>
+                    <li><a href="#subscriptions">ТАРИФЫ</a></li>
+                    <li><a href="#results">РЕЗУЛЬТАТЫ</a></li>
+                    <li><a href="#faq">FAQ</a></li>
                 </ul>
-                <div class="logo">
+                <a href="#home" class="logo">
                     <div class="logo-square">
                         <div class="logo-monogram">LF</div>
                     </div>
                     <div class="logo-text">LEVEL FIT</div>
-                </div>
+                </a>
                 <div class="nav-menu-right">
-                    <a href="#premium" class="nav-link-premium">ПРЕМИУМ АККАУНТ</a>
-                    <a href="#support" class="nav-link-support">ПОДДЕРЖКА</a>
+                    <a href="#vip-plan" class="nav-link-premium">ПРЕМИУМ АККАУНТ</a>
+                    <a href="#" class="nav-link-support" id="supportBtn">ПОДДЕРЖКА</a>
                 </div>
                 <button class="menu-toggle" aria-label="Toggle menu">
                     <span></span>
@@ -43,45 +44,61 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="hero-bg-effects">
+            <div class="hero-glow hero-glow-1"></div>
+            <div class="hero-glow hero-glow-2"></div>
+        </div>
+        
         <div class="container">
             <div class="hero-wrapper">
-                <div class="hero-image-container">
-                    <div class="hero-image hero-image-main"></div>
+                <!-- Left Side: Image -->
+                <div class="hero-image-side">
+                    <div class="hero-image-container" id="heroImageContainer">
+                        <div class="hero-image active" data-goal="default" style="background-image: url('images/hero-1.jpg');"></div>
+                        <div class="hero-image" data-goal="muscle" style="background-image: url('images/hero-2.JPG');"></div>
+                        <div class="hero-image" data-goal="cutting" style="background-image: url('images/hero-3.JPG');"></div>
+                        <div class="hero-image" data-goal="weight-loss" style="background-image: url('images/hero-4.JPG');"></div>
+                    </div>
                 </div>
-                <div class="hero-content-wrapper">
-                    <div class="hero-content">
-                        <div class="hero-badge">ONLINE COACHING | PREMIUM</div>
-                        <h1 class="hero-title">Уровень тела, которого ты еще не видел</h1>
-                        <p class="hero-description">
-                            Персональные онлайн тренировки и индивидуальный план питания от профессиональных тренеров. 
-                            Достигай своих целей с поддержкой экспертов 24/7.
-                        </p>
-                        <a href="#subscriptions" class="btn btn-primary"><span>НАЧАТЬ ПРОГРАММУ</span></a>
-                        <p class="hero-note">Первая консультация бесплатно</p>
+                
+                <!-- Right Side: Content + Goal Cards -->
+                <div class="hero-content-side">
+                    <h1 class="hero-title">Уровень тела, которого ты еще не видел</h1>
+                    <p class="hero-description">
+                        Выбери свою цель и начни трансформацию уже сегодня
+                    </p>
+                    
+                    <!-- Visual Goal Cards -->
+                    <div class="goal-cards">
+                        <div class="goal-card" data-goal="muscle" data-image="images/hero-2.JPG">
+                            <div class="goal-card-icon">💪</div>
+                            <div class="goal-card-content">
+                                <h3 class="goal-card-title">Набор массы</h3>
+                                <p class="goal-card-desc">Рост мышц и силы</p>
+                            </div>
+                            <div class="goal-card-check">✓</div>
+                        </div>
+                        
+                        <div class="goal-card" data-goal="cutting" data-image="images/hero-3.JPG">
+                            <div class="goal-card-icon">🔥</div>
+                            <div class="goal-card-content">
+                                <h3 class="goal-card-title">Сушка</h3>
+                                <p class="goal-card-desc">Рельеф и детали</p>
+                            </div>
+                            <div class="goal-card-check">✓</div>
+                        </div>
+                        
+                        <div class="goal-card" data-goal="weight-loss" data-image="images/hero-4.JPG">
+                            <div class="goal-card-icon">⚡</div>
+                            <div class="goal-card-content">
+                                <h3 class="goal-card-title">Похудение</h3>
+                                <p class="goal-card-desc">Минус лишний вес</p>
+                            </div>
+                            <div class="goal-card-check">✓</div>
+                        </div>
                     </div>
                     
-                    <!-- Goal Selection Sidebar -->
-                    <div class="goal-selection">
-                        <h3 class="goal-title">ВЫБЕРИТЕ ЦЕЛЬ</h3>
-                        <form class="goal-form">
-                            <label class="radio-label">
-                                <input type="radio" name="goal" value="muscle" class="radio-input">
-                                <span class="radio-custom"></span>
-                                <span class="radio-text">Набор массы</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="goal" value="cutting" class="radio-input">
-                                <span class="radio-custom"></span>
-                                <span class="radio-text">Сушка</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="goal" value="weight-loss" class="radio-input">
-                                <span class="radio-custom"></span>
-                                <span class="radio-text">Похудение</span>
-                            </label>
-                            <button type="submit" class="btn btn-goal"><span>ПОДАТЬ ЗАЯВКУ</span></button>
-                        </form>
-                    </div>
+                    <button class="btn btn-primary btn-hero" id="heroCtaBtn"><span>НАЧАТЬ ПРОГРАММУ</span></button>
                 </div>
             </div>
         </div>
@@ -225,7 +242,7 @@
                 </div>
 
                 <!-- VIP Plan (Premium Gold) -->
-                <div class="subscription-card subscription-vip">
+                <div class="subscription-card subscription-vip" id="vip-plan">
                     <h3 class="subscription-title">ПРЕМИУМ VIP</h3>
                     <div class="subscription-price-wrapper">
                         <span class="subscription-price-old">$450</span>
@@ -420,7 +437,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-4-before.jpg" alt="До" />
+                                    <img src="images/transformation-6-before.jpg" alt="До" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -431,7 +448,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-4-after.jpg" alt="После" />
+                                    <img src="images/transformation-6-after.jpg" alt="После" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -454,12 +471,12 @@
                         <div class="result-stats">
                             <div class="stat-item">
                                 <span class="stat-label">Время</span>
-                                <span class="stat-value">6 месяцев</span>
+                                <span class="stat-value">4 месяца</span>
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
                                 <span class="stat-label">Прогресс</span>
-                                <span class="stat-value">+180%</span>
+                                <span class="stat-value">+125%</span>
                             </div>
                         </div>
                     </div>
@@ -512,6 +529,162 @@
                             <div class="stat-item">
                                 <span class="stat-label">Прогресс</span>
                                 <span class="stat-value">+110%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result 6 -->
+                <div class="result-card">
+                    <div class="result-comparison">
+                        <div class="result-image-container">
+                            <div class="result-divider-line"></div>
+                            <div class="result-image result-before">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-4-before.jpg" alt="До" />
+                                </div>
+                                <div class="result-overlay result-overlay-before">
+                                    <div class="result-badge result-badge-before">
+                                        <span class="badge-icon">📸</span>
+                                        <span class="badge-text">ДО</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-image result-after">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-4-after.jpg" alt="После" />
+                                </div>
+                                <div class="result-overlay result-overlay-after">
+                                    <div class="result-badge result-badge-after">
+                                        <span class="badge-icon">✨</span>
+                                        <span class="badge-text">ПОСЛЕ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-slider-container">
+                            <div class="result-slider-handle">
+                                <div class="slider-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 5L12 9L8 13M16 5L20 9L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <input type="range" class="result-slider" min="0" max="100" value="50" aria-label="Сравнение до и после">
+                        </div>
+                        <div class="result-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Время</span>
+                                <span class="stat-value">6 месяцев</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-label">Прогресс</span>
+                                <span class="stat-value">+180%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result 7 -->
+                <div class="result-card">
+                    <div class="result-comparison">
+                        <div class="result-image-container">
+                            <div class="result-divider-line"></div>
+                            <div class="result-image result-before">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-7-before.jpg" alt="До" />
+                                </div>
+                                <div class="result-overlay result-overlay-before">
+                                    <div class="result-badge result-badge-before">
+                                        <span class="badge-icon">📸</span>
+                                        <span class="badge-text">ДО</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-image result-after">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-7-after.jpg" alt="После" />
+                                </div>
+                                <div class="result-overlay result-overlay-after">
+                                    <div class="result-badge result-badge-after">
+                                        <span class="badge-icon">✨</span>
+                                        <span class="badge-text">ПОСЛЕ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-slider-container">
+                            <div class="result-slider-handle">
+                                <div class="slider-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 5L12 9L8 13M16 5L20 9L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <input type="range" class="result-slider" min="0" max="100" value="50" aria-label="Сравнение до и после">
+                        </div>
+                        <div class="result-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Время</span>
+                                <span class="stat-value">5 месяцев</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-label">Прогресс</span>
+                                <span class="stat-value">+140%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result 8 -->
+                <div class="result-card">
+                    <div class="result-comparison">
+                        <div class="result-image-container">
+                            <div class="result-divider-line"></div>
+                            <div class="result-image result-before">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-8-before.jpg" alt="До" />
+                                </div>
+                                <div class="result-overlay result-overlay-before">
+                                    <div class="result-badge result-badge-before">
+                                        <span class="badge-icon">📸</span>
+                                        <span class="badge-text">ДО</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-image result-after">
+                                <div class="result-image-wrapper">
+                                    <img src="images/transformation-8-after.jpg" alt="После" />
+                                </div>
+                                <div class="result-overlay result-overlay-after">
+                                    <div class="result-badge result-badge-after">
+                                        <span class="badge-icon">✨</span>
+                                        <span class="badge-text">ПОСЛЕ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-slider-container">
+                            <div class="result-slider-handle">
+                                <div class="slider-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 5L12 9L8 13M16 5L20 9L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <input type="range" class="result-slider" min="0" max="100" value="50" aria-label="Сравнение до и после">
+                        </div>
+                        <div class="result-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Время</span>
+                                <span class="stat-value">6 месяцев</span>
+                            </div>
+                            <div class="stat-divider"></div>
+                            <div class="stat-item">
+                                <span class="stat-label">Прогресс</span>
+                                <span class="stat-value">+160%</span>
                             </div>
                         </div>
                     </div>
@@ -576,10 +749,6 @@
                             </p>
                         </div>
                     </div>
-
-                    <div class="process-image">
-                        <div class="process-img"></div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -597,7 +766,7 @@
                     </button>
                     <div class="faq-answer" id="faq-answer-1">
                         <div class="faq-answer-content">
-                            <p>Это нормальный страх. Мы проговариваем, что именно ты должна чувствовать, какие мышцы включать и как ловить ошибки, поэтому ты не просто повторяешь движения, а понимаешь механику.</p>
+                            <p>Это нормальный страх. Мы проговариваем, что именно нужно чувствовать, какие мышцы включать и как ловить ошибки, поэтому ты не просто повторяешь движения, а понимаешь механику.</p>
                         </div>
                     </div>
                 </div>
@@ -609,14 +778,14 @@
                     </button>
                     <div class="faq-answer" id="faq-answer-2">
                         <div class="faq-answer-content">
-                            <p>Весь опыт LEVEL FIT — это онлайн-ведение. Девушки тренируются дома или в зале без тренера рядом, а результат даёт система: понятные инструкции, корректировки и поддержка каждый день.</p>
+                            <p>Весь опыт LEVEL FIT — это онлайн-ведение. Клиенты тренируются дома или в зале без тренера рядом, а результат даёт система: понятные инструкции, корректировки и поддержка каждый день.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3">
-                        <span class="faq-question-text">А если я никогда не занималась?</span>
+                        <span class="faq-question-text">А если я никогда не занимался(-ась)?</span>
                         <span class="faq-icon" aria-hidden="true"></span>
                     </button>
                     <div class="faq-answer" id="faq-answer-3">
@@ -669,7 +838,7 @@
                     </button>
                     <div class="faq-answer" id="faq-answer-7">
                         <div class="faq-answer-content">
-                            <p>Раньше ты пробовала универсальные программы — отсюда и разочарование. Здесь всё персонально: есть система, пошаговые корректировки и команда, которая держит тебя за руку.</p>
+                            <p>Раньше ты пробовал(-а) универсальные программы — отсюда и разочарование. Здесь всё персонально: есть система, пошаговые корректировки и команда, которая держит тебя за руку.</p>
                         </div>
                     </div>
                 </div>
@@ -693,7 +862,7 @@
                     </button>
                     <div class="faq-answer" id="faq-answer-9">
                         <div class="faq-answer-content">
-                            <p>Мы против голодовок и списков «нельзя». Питание должно быть вкусным и понятным, иначе результат не удержать. Только баланс, который работает на тело, а не против тебя.</p>
+                            <p>Мы против голодовок и списков «нельзя». Питание должно быть вкусным и понятным, иначе результат не удержать. Только баланс, который работает на твоё тело, а не против него.</p>
                         </div>
                     </div>
                 </div>
@@ -770,6 +939,30 @@
             d.getElementsByTagName("head")[0].appendChild(s);
         })();
     </script>
+
+    <!-- Custom CSS to override Crisp chat color to gold -->
+    <style>
+        /* Target Crisp chat bubble - multiple attempts for reliability */
+        .crisp-client .cc-unoo,
+        .crisp-client .cc-1ada,
+        .crisp-client .cc-ge4v,
+        .crisp-client .cc-kxkl,
+        .crisp-client [data-color-theme],
+        .crisp-client [style*="background-color"] {
+            background-color: #FFD700 !important;
+            background-image: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+        }
+        
+        /* Crisp main button */
+        .crisp-client > div > a {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+        }
+        
+        /* Force all blue colors to gold */
+        .crisp-client * {
+            --crisp-primary: #FFD700 !important;
+        }
+    </style>
 </body>
 </html>
 
