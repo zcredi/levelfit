@@ -37,3 +37,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Запуск бота
 CMD ["python3", "bot.py"]
 
+

@@ -104,3 +104,4 @@ echo "   - START_HERE.md - быстрый старт"
 echo "   - SETUP.md - подробная настройка"
 echo ""
 
+
