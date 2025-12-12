@@ -127,84 +127,81 @@ const plans = {
     }
 };
 
-// Modal Elements
-const modal = document.getElementById('subscriptionModal');
-const modalPlanName = document.getElementById('modalPlanName');
-const modalPrice = document.getElementById('modalPrice');
-const subscriptionForm = document.getElementById('subscriptionForm');
-const modalClose = document.querySelector('.modal-close');
+// Telegram Bot Configuration
+const TELEGRAM_BOT_USERNAME = 'levelfitbot'; // Username вашего бота (без @)
 
-// Open Modal on Service Button Click
+// Open Telegram Bot on Service Button Click
 document.querySelectorAll('.btn-service').forEach(button => {
     button.addEventListener('click', () => {
         const planId = button.getAttribute('data-plan');
         const plan = plans[planId];
         
-        if (plan && modal && modalPlanName && modalPrice) {
-            modalPlanName.textContent = plan.name;
-            modalPrice.textContent = `${plan.price} ${plan.currency || '$'}`;
-            if (subscriptionForm) {
-                subscriptionForm.setAttribute('data-plan', planId);
-            }
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+        if (plan) {
+            // Формируем ссылку на Telegram бота с параметром тарифа
+            const telegramUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=${planId}`;
+            
+            // Открываем Telegram бота в новой вкладке
+            window.open(telegramUrl, '_blank');
         }
     });
 });
 
-// Close Modal
-if (modalClose) {
-    modalClose.addEventListener('click', () => {
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-}
+// Старый код модального окна закомментирован, так как теперь используется Telegram бот
+// Если понадобится вернуть модальное окно, раскомментируйте код ниже
 
-// Close Modal when clicking outside
-if (modal) {
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-}
+// // Close Modal
+// if (modalClose) {
+//     modalClose.addEventListener('click', () => {
+//         if (modal) {
+//             modal.style.display = 'none';
+//             document.body.style.overflow = 'auto';
+//         }
+//     });
+// }
 
-// Handle Subscription Form Submission
-if (subscriptionForm) {
-    subscriptionForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(subscriptionForm);
-        const planId = subscriptionForm.getAttribute('data-plan');
-        const plan = plans[planId];
-        
-        if (plan) {
-            const data = {
-                plan: plan.name,
-                price: plan.price,
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone')
-            };
-            
-            // Here you would typically send this data to your backend
-            console.log('Subscription Data:', data);
-            
-            // Show success message
-            alert(`Спасибо, ${data.name}! Ваша заявка на подписку "${plan.name}" принята. Мы свяжемся с вами в ближайшее время.`);
-            
-            // Reset form and close modal
-            subscriptionForm.reset();
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            document.body.style.overflow = 'auto';
-        }
-    });
-}
+// // Close Modal when clicking outside
+// if (modal) {
+//     window.addEventListener('click', (e) => {
+//         if (e.target === modal) {
+//             modal.style.display = 'none';
+//             document.body.style.overflow = 'auto';
+//         }
+//     });
+// }
+
+// // Handle Subscription Form Submission
+// if (subscriptionForm) {
+//     subscriptionForm.addEventListener('submit', (e) => {
+//         e.preventDefault();
+//         
+//         const formData = new FormData(subscriptionForm);
+//         const planId = subscriptionForm.getAttribute('data-plan');
+//         const plan = plans[planId];
+//         
+//         if (plan) {
+//             const data = {
+//                 plan: plan.name,
+//                 price: plan.price,
+//                 name: formData.get('name'),
+//                 email: formData.get('email'),
+//                 phone: formData.get('phone')
+//             };
+//             
+//             // Here you would typically send this data to your backend
+//             console.log('Subscription Data:', data);
+//             
+//             // Show success message
+//             alert(`Спасибо, ${data.name}! Ваша заявка на подписку "${plan.name}" принята. Мы свяжемся с вами в ближайшее время.`);
+//             
+//             // Reset form and close modal
+//             subscriptionForm.reset();
+//             if (modal) {
+//                 modal.style.display = 'none';
+//             }
+//             document.body.style.overflow = 'auto';
+//         }
+//     });
+// }
 
 // Visual Goal Cards Selection with Highlight Effect
 document.addEventListener('DOMContentLoaded', () => {

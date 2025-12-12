@@ -1,0 +1,44 @@
+# Systemd service file for LEVEL FIT Telegram Bot
+# 
+# Установка:
+# 1. Отредактируйте пути ниже (замените /path/to/levelfit и your_username)
+# 2. Скопируйте этот файл: sudo cp levelfit-bot.service /etc/systemd/system/
+# 3. Перезагрузите systemd: sudo systemctl daemon-reload
+# 4. Включите автозапуск: sudo systemctl enable levelfit-bot
+# 5. Запустите сервис: sudo systemctl start levelfit-bot
+# 6. Проверьте статус: sudo systemctl status levelfit-bot
+#
+# Управление:
+# - Остановить: sudo systemctl stop levelfit-bot
+# - Перезапустить: sudo systemctl restart levelfit-bot
+# - Логи: sudo journalctl -u levelfit-bot -f
+
+[Unit]
+Description=LEVEL FIT Telegram Payment Bot
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=your_username
+Group=your_username
+WorkingDirectory=/path/to/levelfit/bot
+Environment="PATH=/usr/bin:/usr/local/bin"
+ExecStart=/usr/bin/python3 /path/to/levelfit/bot/bot.py
+
+# Автоматический перезапуск при падении
+Restart=always
+RestartSec=10
+
+# Ограничения ресурсов (опционально)
+MemoryMax=512M
+CPUQuota=50%
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=levelfit-bot
+
+[Install]
+WantedBy=multi-user.target
+
