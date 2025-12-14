@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # Токен бота
 BOT_TOKEN = os.getenv('BOT_TOKEN', '8029053288:AAHZdSBMbp_1bEr8DgU_n6qrxl6kkkVuScc')
 ADMIN_TELEGRAM_ID = os.getenv('ADMIN_TELEGRAM_ID')
-CHANNEL_ID = os.getenv('CHANNEL_ID')  # ID канала для заявок
+CHANNEL_ID = os.getenv('CHANNEL_ID')
 
 # Создаем бота и диспетчер
 bot = Bot(token=BOT_TOKEN)
@@ -104,11 +104,11 @@ async def cmd_start(message: types.Message):
         # Показываем все тарифы
         logger.info("Показываем все тарифы")
         
-        text = "🏋️ Добро пожаловать в LEVEL FIT!\n\n"
+        text = "🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
         text += "💪 Онлайн тренировки и персональные программы питания\n\n"
         text += "Выберите подходящий тариф:"
         
-        await message.answer(text, reply_markup=get_plans_keyboard())
+        await message.answer(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
         logger.info("Сообщение с тарифами отправлено")
         
     except Exception as e:
@@ -127,8 +127,8 @@ async def show_plan_details(message_or_callback, plan_id: str):
         
         discount = int(((plan['old_price'] - plan['price']) / plan['old_price']) * 100)
         
-        # Простой текст без HTML
-        text = f"{plan['emoji']} {plan['name']}\n\n"
+        # Используем MarkdownV2 для зачеркивания
+        text = f"{plan['emoji']} *{plan['name']}*\n\n"
         
         if plan_id == 'light':
             text += "✨ Готовая программа тренировок\n"
@@ -152,21 +152,22 @@ async def show_plan_details(message_or_callback, plan_id: str):
             text += "🧠 Психологическая поддержка\n"
             text += "💊 Рекомендации по добавкам\n"
         
-        text += f"\n💰 Цена: ${plan['old_price']} → ${plan['price']}/месяц\n"
-        text += f"🎁 Скидка: {discount}%\n"
+        # Зачеркнутая старая цена и новая цена
+        text += f"\n💰 Цена: ~${plan['old_price']}~ → *${plan['price']}/месяц*\n"
+        text += f"🎁 Скидка: *{discount}%*\n"
         
         if plan.get('recommended'):
-            text += "\n⭐️ РЕКОМЕНДУЕМЫЙ ТАРИФ ⭐️\n"
+            text += "\n⭐️ *РЕКОМЕНДУЕМЫЙ ТАРИФ* ⭐️\n"
         
-        text += "\n📞 Свяжитесь с тренером или оставьте заявку!"
+        text += "\n📞 Свяжитесь с тренером или оставьте заявку\\!"
         
         keyboard = get_payment_keyboard(plan_id)
         
         if isinstance(message_or_callback, types.Message):
-            await message_or_callback.answer(text, reply_markup=keyboard)
+            await message_or_callback.answer(text, reply_markup=keyboard, parse_mode="MarkdownV2")
             logger.info(f"Отправлены детали тарифа {plan_id} пользователю {message_or_callback.from_user.id}")
         else:
-            await message_or_callback.message.edit_text(text, reply_markup=keyboard)
+            await message_or_callback.message.edit_text(text, reply_markup=keyboard, parse_mode="MarkdownV2")
             logger.info(f"Обновлены детали тарифа {plan_id}")
             
     except Exception as e:
@@ -291,12 +292,10 @@ async def handle_text(message: types.Message):
         admin_text += f"🔗 @{message.from_user.username or 'нет'}\n\n"
         admin_text += f"📝 Данные:\n{message.text}"
         
-        # Отправка админу (в личку)
         if ADMIN_TELEGRAM_ID:
             await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
             logger.info(f"Уведомление отправлено админу {ADMIN_TELEGRAM_ID}")
         
-        # Отправка в канал (для истории)
         if CHANNEL_ID:
             await bot.send_message(CHANNEL_ID, admin_text)
             logger.info(f"Заявка сохранена в канал {CHANNEL_ID}")
@@ -365,5 +364,4 @@ if __name__ == '__main__':
         logger.info("Бот остановлен пользователем")
     except Exception as e:
         logger.error(f"Ошибка запуска: {e}", exc_info=True)
-
 
