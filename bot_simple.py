@@ -60,7 +60,8 @@ PLANS = {
 def get_plans_keyboard():
     buttons = []
     for plan_id, plan in PLANS.items():
-        text = f"{plan['emoji']} {plan['name']} - ${plan['price']}"
+        # Показываем старую и новую цену
+        text = f"{plan['emoji']} {plan['name']} - ${plan['old_price']} → ${plan['price']}"
         if plan.get('recommended'):
             text += " ⭐️"
         buttons.append([InlineKeyboardButton(text=text, callback_data=f"plan_{plan_id}")])
