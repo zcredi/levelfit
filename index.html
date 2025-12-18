@@ -3,14 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LEVEL FIT - Персональные онлайн тренировки и индивидуальные планы питания. Достигни своей цели с профессиональным тренером.">
+    <meta name="theme-color" content="#FFD700">
     <title>LEVEL FIT - Онлайн Тренировки и Питание</title>
+    
+    <!-- Performance optimizations -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://client.crisp.chat">
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMBBSSJLm2E.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/dmserifdisp lay/v15/-nFnOHM81r4j6k0gjAW3mujVU2B2K_d709jy92k.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Load fonts with display=swap for better performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Critical CSS inline would go here in production -->
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -55,10 +70,7 @@
                 <!-- Left Side: Image -->
                 <div class="hero-image-side">
                     <div class="hero-image-container" id="heroImageContainer">
-                        <div class="hero-image active" data-goal="default" style="background-image: url('images/hero-1.jpg');"></div>
-                        <div class="hero-image" data-goal="muscle" style="background-image: url('images/hero-2.JPG');"></div>
-                        <div class="hero-image" data-goal="cutting" style="background-image: url('images/hero-3.JPG');"></div>
-                        <div class="hero-image" data-goal="weight-loss" style="background-image: url('images/hero-4.JPG');"></div>
+                        <div class="hero-image active" style="background-image: url('images/hero-1.jpg');"></div>
                     </div>
                 </div>
                 
@@ -71,7 +83,7 @@
                     
                     <!-- Visual Goal Cards -->
                     <div class="goal-cards">
-                        <div class="goal-card" data-goal="muscle" data-image="images/hero-2.JPG">
+                        <div class="goal-card">
                             <div class="goal-card-icon">💪</div>
                             <div class="goal-card-content">
                                 <h3 class="goal-card-title">Набор массы</h3>
@@ -80,7 +92,7 @@
                             <div class="goal-card-check">✓</div>
                         </div>
                         
-                        <div class="goal-card" data-goal="cutting" data-image="images/hero-3.JPG">
+                        <div class="goal-card">
                             <div class="goal-card-icon">🔥</div>
                             <div class="goal-card-content">
                                 <h3 class="goal-card-title">Сушка</h3>
@@ -89,7 +101,7 @@
                             <div class="goal-card-check">✓</div>
                         </div>
                         
-                        <div class="goal-card" data-goal="weight-loss" data-image="images/hero-4.JPG">
+                        <div class="goal-card">
                             <div class="goal-card-icon">⚡</div>
                             <div class="goal-card-content">
                                 <h3 class="goal-card-title">Похудение</h3>
@@ -281,7 +293,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-1-before.jpg" alt="До" />
+                                    <img src="images/transformation-1-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -292,7 +304,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-1-after.jpg" alt="После" />
+                                    <img src="images/transformation-1-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -333,7 +345,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-2-before.jpg" alt="До" />
+                                    <img src="images/transformation-2-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -344,7 +356,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-2-after.jpg" alt="После" />
+                                    <img src="images/transformation-2-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -385,7 +397,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-3-before.jpg" alt="До" />
+                                    <img src="images/transformation-3-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -396,7 +408,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-3-after.jpg" alt="После" />
+                                    <img src="images/transformation-3-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -437,7 +449,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-6-before.jpg" alt="До" />
+                                    <img src="images/transformation-6-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -448,7 +460,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-6-after.jpg" alt="После" />
+                                    <img src="images/transformation-6-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -489,7 +501,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-5-before.jpg" alt="До" />
+                                    <img src="images/transformation-5-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -500,7 +512,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-5-after.jpg" alt="После" />
+                                    <img src="images/transformation-5-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -541,7 +553,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-4-before.jpg" alt="До" />
+                                    <img src="images/transformation-4-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -552,7 +564,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-4-after.jpg" alt="После" />
+                                    <img src="images/transformation-4-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -593,7 +605,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-7-before.jpg" alt="До" />
+                                    <img src="images/transformation-7-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -604,7 +616,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-7-after.jpg" alt="После" />
+                                    <img src="images/transformation-7-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -645,7 +657,7 @@
                             <div class="result-divider-line"></div>
                             <div class="result-image result-before">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-8-before.jpg" alt="До" />
+                                    <img src="images/transformation-8-before.jpg" alt="До" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-before">
                                     <div class="result-badge result-badge-before">
@@ -656,7 +668,7 @@
                             </div>
                             <div class="result-image result-after">
                                 <div class="result-image-wrapper">
-                                    <img src="images/transformation-8-after.jpg" alt="После" />
+                                    <img src="images/transformation-8-after.jpg" alt="После" width="600" height="800" loading="lazy" decoding="async" />
                                 </div>
                                 <div class="result-overlay result-overlay-after">
                                     <div class="result-badge result-badge-after">
@@ -924,20 +936,25 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 
-    <!-- Виджет живого чата (Crisp) -->
+    <!-- Виджет живого чата (Crisp) - загружается асинхронно после загрузки страницы -->
     <script type="text/javascript">
-        window.$crisp = [];
-        window.CRISP_WEBSITE_ID = "49e6bdbe-d6e3-4cea-91db-855e19534a53";
-        (function () {
-            var d = document;
-            var s = d.createElement("script");
-            s.src = "https://client.crisp.chat/l.js";
-            s.async = 1;
-            s.crossOrigin = "anonymous";
-            d.getElementsByTagName("head")[0].appendChild(s);
-        })();
+        // Откладываем загрузку Crisp до полной загрузки страницы
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                window.$crisp = [];
+                window.CRISP_WEBSITE_ID = "49e6bdbe-d6e3-4cea-91db-855e19534a53";
+                (function () {
+                    var d = document;
+                    var s = d.createElement("script");
+                    s.src = "https://client.crisp.chat/l.js";
+                    s.async = 1;
+                    s.crossOrigin = "anonymous";
+                    d.getElementsByTagName("head")[0].appendChild(s);
+                })();
+            }, 3000); // Загружаем Crisp через 3 секунды после загрузки страницы
+        });
     </script>
 
     <!-- Custom CSS to override Crisp chat color to gold -->

@@ -297,3 +297,141 @@ document.querySelectorAll('.radio-input').forEach(radio => {
         this.closest('.radio-label').classList.add('selected');
     });
 });
+
+// Hero Goal Cards - Selection and Scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const goalCards = document.querySelectorAll('.goal-card');
+    const heroCta = document.getElementById('heroCtaBtn');
+    
+    goalCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Remove selected class from all cards
+            goalCards.forEach(c => c.classList.remove('selected'));
+            
+            // Add selected class to clicked card
+            card.classList.add('selected');
+            
+            // Get goal text for analytics or future use
+            const goalTitle = card.querySelector('.goal-card-title')?.textContent;
+            console.log('Выбрана цель:', goalTitle);
+            
+            // Scroll to button smoothly
+            if (heroCta) {
+                const buttonPosition = heroCta.getBoundingClientRect().top + window.pageYOffset;
+                const offset = window.innerHeight / 2 - heroCta.offsetHeight / 2;
+                
+                window.scrollTo({
+                    top: buttonPosition - offset,
+                    behavior: 'smooth'
+                });
+                
+                // Add pulse animation to CTA button after scroll
+                setTimeout(() => {
+                    heroCta.classList.add('btn-pulse');
+                    setTimeout(() => {
+                        heroCta.classList.remove('btn-pulse');
+                    }, 1000);
+                }, 500);
+            }
+        });
+    });
+    
+    // CTA button scrolls to subscriptions
+    if (heroCta) {
+        heroCta.addEventListener('click', () => {
+            const subscriptionsSection = document.getElementById('subscriptions');
+            if (subscriptionsSection) {
+                const offsetTop = subscriptionsSection.offsetTop - 100;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+});
+
+// Before/After Slider Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const resultCards = document.querySelectorAll('.result-card');
+    
+    resultCards.forEach(card => {
+        const container = card.querySelector('.result-image-container');
+        const slider = card.querySelector('.result-slider');
+        const handle = card.querySelector('.result-slider-handle');
+        
+        if (!container || !slider || !handle) return;
+        
+        let rafId = null;
+        
+        // Function to update slider position
+        function updateSliderPosition(percentage) {
+            // Cancel any pending animation frame
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+            
+            // Use requestAnimationFrame for smooth updates
+            rafId = requestAnimationFrame(() => {
+                container.style.setProperty('--slider-position', percentage + '%');
+                handle.style.left = percentage + '%';
+                rafId = null;
+            });
+        }
+        
+        // Handle slider input
+        slider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            updateSliderPosition(value);
+        });
+        
+        // Handle mouse drag on container
+        let isDragging = false;
+        
+        function handleMove(e) {
+            if (!isDragging) return;
+            
+            const rect = container.getBoundingClientRect();
+            let x;
+            
+            if (e.type.startsWith('touch')) {
+                x = e.touches[0].clientX - rect.left;
+            } else {
+                x = e.clientX - rect.left;
+            }
+            
+            const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            slider.value = percentage;
+            updateSliderPosition(percentage);
+        }
+        
+        function startDrag(e) {
+            e.preventDefault(); // Prevent text selection
+            isDragging = true;
+            container.style.cursor = 'grabbing';
+            handleMove(e);
+        }
+        
+        function stopDrag() {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        }
+        
+        // Mouse events
+        container.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', handleMove);
+        document.addEventListener('mouseup', stopDrag);
+        
+        // Touch events for mobile
+        container.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            handleMove(e);
+        });
+        
+        document.addEventListener('touchmove', handleMove);
+        document.addEventListener('touchend', stopDrag);
+        
+        // Initialize position
+        updateSliderPosition(50);
+    });
+});
