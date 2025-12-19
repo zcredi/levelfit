@@ -298,10 +298,14 @@ document.querySelectorAll('.radio-input').forEach(radio => {
     });
 });
 
-// Hero Goal Cards - Selection and Scroll
+// Hero Goal Cards - Selection and Redirect to Bot
 document.addEventListener('DOMContentLoaded', () => {
     const goalCards = document.querySelectorAll('.goal-card');
     const heroCta = document.getElementById('heroCtaBtn');
+    let selectedGoal = null;
+    
+    // Telegram Bot Username
+    const BOT_USERNAME = 'levelfitbot';
     
     goalCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -311,9 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add selected class to clicked card
             card.classList.add('selected');
             
-            // Get goal text for analytics or future use
+            // Save selected goal
+            selectedGoal = card.getAttribute('data-goal');
             const goalTitle = card.querySelector('.goal-card-title')?.textContent;
-            console.log('Выбрана цель:', goalTitle);
+            console.log('Выбрана цель:', goalTitle, '(', selectedGoal, ')');
             
             // Scroll to button smoothly
             if (heroCta) {
@@ -336,16 +341,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // CTA button scrolls to subscriptions
+    // CTA button redirects to Telegram bot with selected goal
     if (heroCta) {
         heroCta.addEventListener('click', () => {
-            const subscriptionsSection = document.getElementById('subscriptions');
-            if (subscriptionsSection) {
-                const offsetTop = subscriptionsSection.offsetTop - 100;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
+            if (selectedGoal) {
+                // Redirect to Telegram bot with goal parameter
+                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${selectedGoal}`;
+                window.open(telegramUrl, '_blank');
+            } else {
+                // If no goal selected, show alert
+                alert('Пожалуйста, выберите цель тренировок');
             }
         });
     }
