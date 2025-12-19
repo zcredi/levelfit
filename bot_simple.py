@@ -36,6 +36,14 @@ GOALS = {
     'weightloss': 'Снижение веса (похудение)'
 }
 
+# Функция для экранирования спецсимволов MarkdownV2
+def escape_markdown(text):
+    """Экранирует спецсимволы для MarkdownV2"""
+    special_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in special_chars:
+        text = text.replace(char, f'\\{char}')
+    return text
+
 # Состояния FSM для анкеты
 class QuestionnaireStates(StatesGroup):
     waiting_for_fio = State()
@@ -151,9 +159,10 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 # Сохраняем цель
                 await state.update_data(goal=goal_name, goal_id=param)
                 
-                # Приветствие
+                # Приветствие с экранированием
+                goal_name_escaped = escape_markdown(goal_name)
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
-                text += f"Вы выбрали: *{goal_name}*\n\n"
+                text += f"Вы выбрали: *{goal_name_escaped}*\n\n"
                 text += f"Давайте заполним анкету, чтобы создать идеальную программу для вас\\.\n\n"
                 text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
                 
@@ -310,19 +319,30 @@ async def process_weight(message: types.Message, state: FSMContext):
         
         await message.answer(user_text, parse_mode="MarkdownV2")
         
-        # Формируем сообщение для канала
+        # Формируем сообщение для канала с экранированием
+        fio = escape_markdown(data.get('fio', 'Не указано'))
+        goal = escape_markdown(data.get('goal', 'Не указана'))
+        activity = escape_markdown(data.get('activity', 'Не указана'))
+        limitations = escape_markdown(data.get('limitations', 'Не указано'))
+        experience = escape_markdown(data.get('experience', 'Не указан'))
+        workouts = escape_markdown(data.get('workouts_count', 'Не указано'))
+        height = escape_markdown(data.get('height', 'Не указан'))
+        weight = escape_markdown(data.get('weight', 'Не указан'))
+        username = escape_markdown(message.from_user.username or 'нет')
+        fullname = escape_markdown(message.from_user.full_name)
+        
         channel_text = "📋 *НОВАЯ ЗАЯВКА*\n\n"
-        channel_text += f"👤 *ФИО:* {data.get('fio', 'Не указано')}\n"
-        channel_text += f"🎯 *Цель:* {data.get('goal', 'Не указана')}\n"
-        channel_text += f"⚡ *Активность:* {data.get('activity', 'Не указана')}\n"
-        channel_text += f"⚠️ *Противопоказания:* {data.get('limitations', 'Не указано')}\n"
-        channel_text += f"📊 *Опыт тренировок:* {data.get('experience', 'Не указан')}\n"
-        channel_text += f"🏋️ *Тренировок в неделю:* {data.get('workouts_count', 'Не указано')}\n"
-        channel_text += f"📏 *Рост:* {data.get('height', 'Не указан')} см\n"
-        channel_text += f"⚖️ *Вес:* {data.get('weight', 'Не указан')} кг\n\n"
-        channel_text += f"📱 *Telegram:* @{message.from_user.username or 'нет'}\n"
+        channel_text += f"👤 *ФИО:* {fio}\n"
+        channel_text += f"🎯 *Цель:* {goal}\n"
+        channel_text += f"⚡ *Активность:* {activity}\n"
+        channel_text += f"⚠️ *Противопоказания:* {limitations}\n"
+        channel_text += f"📊 *Опыт тренировок:* {experience}\n"
+        channel_text += f"🏋️ *Тренировок в неделю:* {workouts}\n"
+        channel_text += f"📏 *Рост:* {height} см\n"
+        channel_text += f"⚖️ *Вес:* {weight} кг\n\n"
+        channel_text += f"📱 *Telegram:* @{username}\n"
         channel_text += f"🆔 *ID:* {message.from_user.id}\n"
-        channel_text += f"👤 *Имя в TG:* {message.from_user.full_name}"
+        channel_text += f"👤 *Имя в TG:* {fullname}"
         
         # Отправляем в канал
         if CHANNEL_ID:
