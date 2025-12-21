@@ -320,3 +320,5 @@ if __name__ == '__main__':
     except Exception as e:
         logger.error(f"Ошибка запуска: {e}", exc_info=True)
 
+
+

@@ -109,6 +109,24 @@ def get_workouts_keyboard():
     )
     return keyboard
 
+# Клавиатура главного меню
+def get_main_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data="leave_application")],
+        [InlineKeyboardButton(text="💎 Выбрать программу", callback_data="choose_program")]
+    ])
+    return keyboard
+
+# Клавиатура выбора цели
+def get_goals_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="💪 Набор мышечной массы", callback_data="goal_mass")],
+        [InlineKeyboardButton(text="🔥 Коррекция фигуры", callback_data="goal_correction")],
+        [InlineKeyboardButton(text="⚡ Снижение веса", callback_data="goal_weightloss")],
+        [InlineKeyboardButton(text="◀️ Назад", callback_data="back_to_main")]
+    ])
+    return keyboard
+
 # Функция для создания клавиатуры с тарифами
 def get_plans_keyboard():
     buttons = []
@@ -118,6 +136,8 @@ def get_plans_keyboard():
             text += " ⭐️"
         buttons.append([InlineKeyboardButton(text=text, callback_data=f"plan_{plan_id}")])
     
+    buttons.append([InlineKeyboardButton(text="◀️ Назад", callback_data="back_to_main")])
+    
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
@@ -125,9 +145,10 @@ def get_plans_keyboard():
 # Функция для создания клавиатуры для тарифа
 def get_payment_keyboard(plan_id: str):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📋 Оформить заявку", callback_data=f"order_{plan_id}")],
         [InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")],
-        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data=f"order_{plan_id}")],
-        [InlineKeyboardButton(text="◀️ Назад", callback_data="back_to_plans")]
+        [InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")],
+        [InlineKeyboardButton(text="🏠 Главное меню", callback_data="back_to_main")]
     ])
     return keyboard
 
@@ -152,17 +173,17 @@ async def cmd_start(message: types.Message, state: FSMContext):
             
             # Проверяем, это цель с сайта или тариф
             if param in GOALS:
-                # Это цель с сайта - запускаем анкету
+                # Это цель с сайта (кнопка "НАЧАТЬ ПРОГРАММУ")
                 goal_name = GOALS[param]
                 logger.info(f"Пользователь выбрал цель с сайта: {goal_name}")
                 
                 # Сохраняем цель
-                await state.update_data(goal=goal_name, goal_id=param)
+                await state.update_data(goal=goal_name, goal_id=param, from_website=True)
                 
                 # Приветствие с экранированием
                 goal_name_escaped = escape_markdown(goal_name)
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
-                text += f"Вы выбрали: *{goal_name_escaped}*\n\n"
+                text += f"Вы выбрали цель: *{goal_name_escaped}*\n\n"
                 text += f"Давайте заполним анкету, чтобы создать идеальную программу для вас\\.\n\n"
                 text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
                 
@@ -176,22 +197,40 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 return
                 
             elif param in PLANS:
-                # Это прямая ссылка на тариф
-                logger.info(f"Показываем тариф: {param}")
-                await show_plan_details(message, param)
+                # Это выбор тарифа с сайта (кнопка "ВЫБРАТЬ ТАРИФ")
+                plan = PLANS[param]
+                logger.info(f"Пользователь выбрал тариф с сайта: {plan['name']}")
+                
+                # Сохраняем тариф
+                await state.update_data(plan_name=plan['name'], plan_id=param, plan_price=plan['price'], from_website=True)
+                
+                # Приветствие
+                plan_name_escaped = escape_markdown(plan['name'])
+                text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
+                text += f"Вы выбрали тариф: {plan['emoji']} *{plan_name_escaped}* \\(${plan['price']}/мес\\)\n\n"
+                text += f"Давайте заполним анкету для создания персональной программы\\.\n\n"
+                text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+                
+                await message.answer(text, parse_mode="MarkdownV2")
+                
+                # Задаем первый вопрос
+                await asyncio.sleep(1)
+                text_q1 = "1️⃣ *Укажите свои ФИО*\n\nНапример: Иванов Иван Иванович"
+                await message.answer(text_q1, parse_mode="MarkdownV2")
+                await state.set_state(QuestionnaireStates.waiting_for_fio)
                 return
             else:
                 logger.warning(f"Неизвестный параметр: {param}")
         
-        # Показываем все тарифы (если без параметра или неизвестный параметр)
-        logger.info("Показываем все тарифы")
+        # Показываем главное меню (если без параметра или неизвестный параметр)
+        logger.info("Показываем главное меню")
         
         text = "🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
         text += "💪 Онлайн тренировки и персональные программы питания\n\n"
-        text += "Выберите подходящий тариф:"
+        text += "Что вы хотите сделать?"
         
-        await message.answer(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
-        logger.info("Сообщение с тарифами отправлено")
+        await message.answer(text, reply_markup=get_main_menu_keyboard(), parse_mode="MarkdownV2")
+        logger.info("Главное меню отправлено")
         
     except Exception as e:
         logger.error(f"Ошибка в cmd_start: {e}", exc_info=True)
@@ -333,7 +372,16 @@ async def process_weight(message: types.Message, state: FSMContext):
         
         channel_text = "📋 *НОВАЯ ЗАЯВКА*\n\n"
         channel_text += f"👤 *ФИО:* {fio}\n"
-        channel_text += f"🎯 *Цель:* {goal}\n"
+        
+        # Добавляем тариф если выбран
+        if data.get('plan_name'):
+            plan_name = escape_markdown(data.get('plan_name', ''))
+            channel_text += f"💎 *Тариф:* {plan_name} \\(${data.get('plan_price', 0)}/мес\\)\n"
+        
+        # Добавляем цель если выбрана
+        if data.get('goal'):
+            channel_text += f"🎯 *Цель:* {goal}\n"
+        
         channel_text += f"⚡ *Активность:* {activity}\n"
         channel_text += f"⚠️ *Противопоказания:* {limitations}\n"
         channel_text += f"📊 *Опыт тренировок:* {experience}\n"
@@ -357,6 +405,82 @@ async def process_weight(message: types.Message, state: FSMContext):
         await message.answer("Произошла ошибка при отправке анкеты. Попробуйте снова /start")
 
 # ========== КОНЕЦ ОБРАБОТЧИКОВ АНКЕТЫ ==========
+
+
+# ========== ОБРАБОТЧИКИ ГЛАВНОГО МЕНЮ ==========
+
+# Кнопка "Оставить заявку" - показываем выбор цели
+@dp.callback_query(F.data == "leave_application")
+async def process_leave_application(callback: types.CallbackQuery):
+    try:
+        text = "🎯 *Выберите цель тренировок:*"
+        await callback.message.edit_text(text, reply_markup=get_goals_keyboard(), parse_mode="MarkdownV2")
+        await callback.answer()
+    except Exception as e:
+        logger.error(f"Ошибка в process_leave_application: {e}", exc_info=True)
+
+# Кнопка "Выбрать программу" - показываем тарифы
+@dp.callback_query(F.data == "choose_program")
+async def process_choose_program(callback: types.CallbackQuery):
+    try:
+        text = "💎 *Выберите подходящий тариф:*"
+        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
+        await callback.answer()
+    except Exception as e:
+        logger.error(f"Ошибка в process_choose_program: {e}", exc_info=True)
+
+# Кнопка "Назад" в главное меню
+@dp.callback_query(F.data == "back_to_main")
+async def back_to_main_menu(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        # Очищаем состояние если есть
+        await state.clear()
+        
+        text = "🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
+        text += "💪 Онлайн тренировки и персональные программы питания\n\n"
+        text += "Что вы хотите сделать?"
+        
+        await callback.message.edit_text(text, reply_markup=get_main_menu_keyboard(), parse_mode="MarkdownV2")
+        await callback.answer()
+    except Exception as e:
+        logger.error(f"Ошибка в back_to_main_menu: {e}", exc_info=True)
+
+# Обработка выбора цели (из бота, не с сайта)
+@dp.callback_query(F.data.startswith("goal_"))
+async def process_goal_selection(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        goal_id = callback.data.split("_")[1]  # mass, correction, weightloss
+        
+        if goal_id not in GOALS:
+            await callback.answer("❌ Неизвестная цель")
+            return
+        
+        goal_name = GOALS[goal_id]
+        logger.info(f"Пользователь выбрал цель из бота: {goal_name}")
+        
+        # Сохраняем цель
+        await state.update_data(goal=goal_name, goal_id=goal_id, from_bot=True)
+        
+        # Приветствие
+        goal_name_escaped = escape_markdown(goal_name)
+        text = f"✅ Вы выбрали: *{goal_name_escaped}*\n\n"
+        text += f"Отлично\\! Давайте заполним анкету\\.\n\n"
+        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+        
+        await callback.message.edit_text(text, parse_mode="MarkdownV2")
+        await callback.answer()
+        
+        # Задаем первый вопрос
+        await asyncio.sleep(1)
+        text_q1 = "1️⃣ *Укажите свои ФИО*\n\nНапример: Иванов Иван Иванович"
+        await callback.message.answer(text_q1, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_fio)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в process_goal_selection: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
+
+# ========== КОНЕЦ ОБРАБОТЧИКОВ ГЛАВНОГО МЕНЮ ==========
 
 
 # Показать детали тарифа
@@ -430,12 +554,12 @@ async def process_plan_selection(callback: types.CallbackQuery):
         await callback.answer("Ошибка. Попробуйте снова.")
 
 
-# Кнопка "Назад"
+# Кнопка "Назад к тарифам"
 @dp.callback_query(F.data == "back_to_plans")
 async def back_to_plans(callback: types.CallbackQuery):
     try:
-        text = "Выберите подходящий тариф:"
-        await callback.message.edit_text(text, reply_markup=get_plans_keyboard())
+        text = "💎 *Выберите подходящий тариф:*"
+        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
         await callback.answer()
     except Exception as e:
         logger.error(f"Ошибка в back_to_plans: {e}", exc_info=True)
@@ -475,73 +599,59 @@ async def process_contact(callback: types.CallbackQuery):
         logger.error(f"Ошибка в process_contact: {e}", exc_info=True)
 
 
-# Кнопка "Оставить заявку"
+# Кнопка "Оформить заявку" - запускаем анкету с выбранным тарифом
 @dp.callback_query(F.data.startswith("order_"))
-async def process_order(callback: types.CallbackQuery):
+async def process_order(callback: types.CallbackQuery, state: FSMContext):
     try:
         plan_id = callback.data.split("_")[1]
         plan = PLANS.get(plan_id)
         
-        text = f"📋 Оформление заявки\n\n"
-        text += f"Тариф: {plan['name']} (${plan['price']}/мес)\n\n"
-        text += f"Отправьте сообщением:\n\n"
-        text += f"1. Ваше имя\n"
-        text += f"2. Возраст\n"
-        text += f"3. Цель (похудение/масса/сушка)\n"
-        text += f"4. Телефон или email\n\n"
-        text += f"Пример:\n"
-        text += f"Александр, 28, похудение, +375291234567"
+        if not plan:
+            await callback.answer("❌ Ошибка")
+            return
         
-        await callback.message.answer(text)
-        await callback.answer("✅ Отправьте данные!")
+        logger.info(f"Пользователь оформляет заявку на тариф: {plan['name']}")
         
-        # Уведомление админу и в канал
-        admin_text = f"📋 НОВАЯ ЗАЯВКА\n\n"
-        admin_text += f"👤 {callback.from_user.full_name}\n"
-        admin_text += f"🆔 {callback.from_user.id}\n"
-        admin_text += f"📦 Тариф: {plan['name']}\n"
-        admin_text += f"💵 ${plan['price']}\n"
-        admin_text += f"⏳ Ожидает данных..."
+        # Сохраняем тариф
+        await state.update_data(plan_name=plan['name'], plan_id=plan_id, plan_price=plan['price'], from_bot=True)
         
-        if ADMIN_TELEGRAM_ID:
-            await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
+        # Сообщение о начале анкеты
+        plan_name_escaped = escape_markdown(plan['name'])
+        text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\(${plan['price']}/мес\\)\n\n"
+        text += f"Отлично\\! Давайте заполним анкету\\.\n\n"
+        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
         
-        if CHANNEL_ID:
-            await bot.send_message(CHANNEL_ID, admin_text)
+        await callback.message.edit_text(text, parse_mode="MarkdownV2")
+        await callback.answer()
+        
+        # Задаем первый вопрос
+        await asyncio.sleep(1)
+        text_q1 = "1️⃣ *Укажите свои ФИО*\n\nНапример: Иванов Иван Иванович"
+        await callback.message.answer(text_q1, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_fio)
             
     except Exception as e:
         logger.error(f"Ошибка в process_order: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
 
 
-# Обработка текста
+# Обработка текста (только если нет активной анкеты)
 @dp.message(F.text)
-async def handle_text(message: types.Message):
+async def handle_text(message: types.Message, state: FSMContext):
     try:
         if message.text.startswith('/'):
             return
         
-        logger.info(f"Получено сообщение от {message.from_user.id}: {message.text[:50]}")
+        # Проверяем, есть ли активная анкета
+        current_state = await state.get_state()
+        if current_state:
+            # Если анкета активна, этот текст будет обработан соответствующим state handler
+            return
         
-        text = "✅ Заявка принята!\n\n"
-        text += f"Ваши данные:\n{message.text}\n\n"
-        text += "Тренер свяжется с вами в ближайшее время!"
+        logger.info(f"Получено сообщение вне анкеты от {message.from_user.id}: {message.text[:50]}")
         
+        text = "ℹ️ Чтобы оставить заявку, нажмите /start и выберите нужный вариант."
         await message.answer(text)
-        
-        # Админу и в канал
-        admin_text = f"📨 НОВАЯ ЗАЯВКА!\n\n"
-        admin_text += f"👤 {message.from_user.full_name}\n"
-        admin_text += f"🆔 {message.from_user.id}\n"
-        admin_text += f"🔗 @{message.from_user.username or 'нет'}\n\n"
-        admin_text += f"📝 Данные:\n{message.text}"
-        
-        if ADMIN_TELEGRAM_ID:
-            await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
-            logger.info(f"Уведомление отправлено админу {ADMIN_TELEGRAM_ID}")
-        
-        if CHANNEL_ID:
-            await bot.send_message(CHANNEL_ID, admin_text)
-            logger.info(f"Заявка сохранена в канал {CHANNEL_ID}")
             
     except Exception as e:
         logger.error(f"Ошибка в handle_text: {e}", exc_info=True)

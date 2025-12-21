@@ -70,20 +70,17 @@ const modalPrice = document.getElementById('modalPrice');
 const subscriptionForm = document.getElementById('subscriptionForm');
 const modalClose = document.querySelector('.modal-close');
 
-// Open Modal on Service Button Click
+// Redirect to Bot on Service Button Click (Tariff Selection)
 document.querySelectorAll('.btn-service').forEach(button => {
     button.addEventListener('click', () => {
         const planId = button.getAttribute('data-plan');
         const plan = plans[planId];
         
-        if (plan && modal && modalPlanName && modalPrice) {
-            modalPlanName.textContent = plan.name;
-            modalPrice.textContent = `${plan.price} ${plan.currency || '$'}`;
-            if (subscriptionForm) {
-                subscriptionForm.setAttribute('data-plan', planId);
-            }
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+        if (plan) {
+            // Redirect to Telegram bot with tariff parameter
+            const BOT_USERNAME = 'levelfitbot';
+            const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${planId}`;
+            window.open(telegramUrl, '_blank');
         }
     });
 });
