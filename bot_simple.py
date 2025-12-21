@@ -112,8 +112,8 @@ def get_workouts_keyboard():
 # Клавиатура главного меню
 def get_main_menu_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data="leave_application")],
-        [InlineKeyboardButton(text="💎 Выбрать программу", callback_data="choose_program")]
+        [InlineKeyboardButton(text="🎯 Выбрать программу", callback_data="choose_program")],
+        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data="leave_application")]
     ])
     return keyboard
 
@@ -423,7 +423,7 @@ async def process_leave_application(callback: types.CallbackQuery):
 @dp.callback_query(F.data == "choose_program")
 async def process_choose_program(callback: types.CallbackQuery):
     try:
-        text = "💎 *Выберите подходящий тариф:*"
+        text = "🎯 *Выберите подходящий тариф:*"
         await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
         await callback.answer()
     except Exception as e:
@@ -558,7 +558,7 @@ async def process_plan_selection(callback: types.CallbackQuery):
 @dp.callback_query(F.data == "back_to_plans")
 async def back_to_plans(callback: types.CallbackQuery):
     try:
-        text = "💎 *Выберите подходящий тариф:*"
+        text = "🎯 *Выберите подходящий тариф:*"
         await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
         await callback.answer()
     except Exception as e:
