@@ -60,26 +60,30 @@ PLANS = {
         'name': 'ЛАЙТ',
         'price': 39,
         'old_price': 50,
-        'emoji': '🥉'
+        'emoji': '🥉',
+        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8Q'
     },
     'start': {
         'name': 'СТАРТ',
         'price': 69,
         'old_price': 90,
-        'emoji': '🥈'
+        'emoji': '🥈',
+        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8R'
     },
     'optimal': {
         'name': 'ОПТИМА',
         'price': 119,
         'old_price': 150,
         'emoji': '🥇',
-        'recommended': True
+        'recommended': True,
+        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8S'
     },
     'vip': {
         'name': 'ПРЕМИУМ VIP',
         'price': 299,
         'old_price': 450,
-        'emoji': '👑'
+        'emoji': '👑',
+        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8P'
     }
 }
 
@@ -144,12 +148,24 @@ def get_plans_keyboard():
 
 # Функция для создания клавиатуры для тарифа
 def get_payment_keyboard(plan_id: str):
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📋 Оформить заявку", callback_data=f"order_{plan_id}")],
-        [InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")],
-        [InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")],
-        [InlineKeyboardButton(text="🏠 Главное меню", callback_data="back_to_main")]
-    ])
+    plan = PLANS.get(plan_id)
+    buttons = []
+    
+    # Кнопка оплаты через Tribute
+    if plan and plan.get('tribute_link'):
+        buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=plan['tribute_link'])])
+    
+    # Кнопка оформления заявки
+    buttons.append([InlineKeyboardButton(text="📋 Оформить заявку", callback_data=f"order_{plan_id}")])
+    
+    # Кнопка связаться с тренером
+    buttons.append([InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")])
+    
+    # Навигация
+    buttons.append([InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")])
+    buttons.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back_to_main")])
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
 
@@ -526,7 +542,7 @@ async def show_plan_details(message_or_callback, plan_id: str):
         if plan.get('recommended'):
             text += "\n⭐️ *РЕКОМЕНДУЕМЫЙ ТАРИФ* ⭐️\n"
         
-        text += "\n📞 Свяжитесь с тренером или оставьте заявку\\!"
+        text += "\n💳 *Оплатите онлайн* или заполните заявку для связи с тренером\\."
         
         keyboard = get_payment_keyboard(plan_id)
         
