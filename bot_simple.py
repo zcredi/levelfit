@@ -72,7 +72,7 @@ PLANS = {
     },
     'optimal': {
         'name': 'ОПТИМА',
-        'price': 119,
+        'price': 99,
         'old_price': 150,
         'emoji': '🥇',
         'recommended': True,
@@ -80,8 +80,8 @@ PLANS = {
     },
     'vip': {
         'name': 'ПРЕМИУМ VIP',
-        'price': 299,
-        'old_price': 450,
+        'price': 199,
+        'old_price': 350,
         'emoji': '👑',
         'tribute_link': 'https://t.me/tribute/app?startapp=sJ8P'
     }

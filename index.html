@@ -16,11 +16,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://client.crisp.chat">
     
-    <!-- Preload critical fonts -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUXskPMBBSSJLm2E.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="https://fonts.gstatic.com/s/dmserifdisp lay/v15/-nFnOHM81r4j6k0gjAW3mujVU2B2K_d709jy92k.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Preload critical hero image -->
+    <link rel="preload" as="image" href="images/hero-1.jpg" fetchpriority="high">
     
-    <!-- Load fonts with display=swap for better performance -->
+    <!-- Load fonts asynchronously -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
@@ -237,7 +236,7 @@
                     <h3 class="subscription-title">ОПТИМА</h3>
                     <div class="subscription-price-wrapper">
                         <span class="subscription-price-old">$150</span>
-                        <div class="subscription-price">$119</div>
+                        <div class="subscription-price">$99</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Идеально для:</p>
@@ -258,8 +257,8 @@
                 <div class="subscription-card subscription-vip" id="vip-plan">
                     <h3 class="subscription-title">ПРЕМИУМ VIP</h3>
                     <div class="subscription-price-wrapper">
-                        <span class="subscription-price-old">$450</span>
-                        <div class="subscription-price">$299</div>
+                        <span class="subscription-price-old">$350</span>
+                        <div class="subscription-price">$199</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Идеально для:</p>
@@ -431,12 +430,12 @@
                         <div class="result-stats">
                             <div class="stat-item">
                                 <span class="stat-label">Время</span>
-                                <span class="stat-value">5 месяцев</span>
+                                <span class="stat-value">2 месяца</span>
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
                                 <span class="stat-label">Прогресс</span>
-                                <span class="stat-value">+150%</span>
+                                <span class="stat-value">+95%</span>
                             </div>
                         </div>
                     </div>
@@ -938,22 +937,33 @@
 
     <script src="script.js" defer></script>
 
-    <!-- Виджет живого чата (Crisp) - загружается асинхронно после загрузки страницы -->
+    <!-- Виджет живого чата (Crisp) - загружается с задержкой -->
     <script type="text/javascript">
-        // Откладываем загрузку Crisp до полной загрузки страницы
+        // Откладываем загрузку Crisp до взаимодействия пользователя или через 5 секунд
+        var crispLoaded = false;
+        
+        function loadCrisp() {
+            if (crispLoaded) return;
+            crispLoaded = true;
+            
+            window.$crisp = [];
+            window.CRISP_WEBSITE_ID = "49e6bdbe-d6e3-4cea-91db-855e19534a53";
+            (function () {
+                var d = document;
+                var s = d.createElement("script");
+                s.src = "https://client.crisp.chat/l.js";
+                s.async = 1;
+                s.crossOrigin = "anonymous";
+                d.getElementsByTagName("head")[0].appendChild(s);
+            })();
+        }
+        
+        // Загружаем при первом скролле, клике или через 5 секунд
         window.addEventListener('load', function() {
-            setTimeout(function() {
-                window.$crisp = [];
-                window.CRISP_WEBSITE_ID = "49e6bdbe-d6e3-4cea-91db-855e19534a53";
-                (function () {
-                    var d = document;
-                    var s = d.createElement("script");
-                    s.src = "https://client.crisp.chat/l.js";
-                    s.async = 1;
-                    s.crossOrigin = "anonymous";
-                    d.getElementsByTagName("head")[0].appendChild(s);
-                })();
-            }, 3000); // Загружаем Crisp через 3 секунды после загрузки страницы
+            setTimeout(loadCrisp, 5000);
+            document.addEventListener('scroll', loadCrisp, { once: true });
+            document.addEventListener('click', loadCrisp, { once: true });
+            document.addEventListener('touchstart', loadCrisp, { once: true });
         });
     </script>
 

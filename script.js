@@ -51,13 +51,13 @@ const plans = {
     },
     optimal: {
         name: 'ОПТИМА',
-        price: 119,
+        price: 99,
         currency: '$',
         description: 'Рекомендуемый тариф с регулярной поддержкой'
     },
     vip: {
         name: 'ПРЕМИУМ VIP',
-        price: 299,
+        price: 199,
         currency: '$',
         description: 'Максимальное внимание и поддержка 24/7'
     }
