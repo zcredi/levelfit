@@ -155,10 +155,7 @@ def get_payment_keyboard(plan_id: str):
     if plan and plan.get('tribute_link'):
         buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=plan['tribute_link'])])
     
-    # Кнопка оформления заявки
-    buttons.append([InlineKeyboardButton(text="📋 Оформить заявку", callback_data=f"order_{plan_id}")])
-    
-    # Кнопка связаться с тренером
+    # Кнопка связаться с тренером (запускает анкету)
     buttons.append([InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")])
     
     # Навигация
@@ -581,43 +578,9 @@ async def back_to_plans(callback: types.CallbackQuery):
         logger.error(f"Ошибка в back_to_plans: {e}", exc_info=True)
 
 
-# Кнопка "Связаться"
+# Кнопка "Связаться с тренером" - запускаем анкету с выбранным тарифом
 @dp.callback_query(F.data.startswith("contact_"))
-async def process_contact(callback: types.CallbackQuery):
-    try:
-        plan_id = callback.data.split("_")[1]
-        plan = PLANS.get(plan_id)
-        
-        text = f"📞 Связаться с тренером\n\n"
-        text += f"Вы выбрали: {plan['name']} (${plan['price']}/мес)\n\n"
-        text += f"Напишите тренеру:\n"
-        text += f"👤 @denis_levelfit\n\n"
-        text += f"Мы ответим в течение часа!"
-        
-        await callback.message.answer(text)
-        await callback.answer("✅ Контакты отправлены!")
-        
-        # Уведомление админу и в канал
-        admin_text = f"📞 ЗАПРОС НА СВЯЗЬ\n\n"
-        admin_text += f"👤 {callback.from_user.full_name}\n"
-        admin_text += f"🆔 {callback.from_user.id}\n"
-        admin_text += f"📦 Тариф: {plan['name']}\n"
-        admin_text += f"💵 ${plan['price']}\n"
-        admin_text += f"🔗 @{callback.from_user.username or 'нет'}"
-        
-        if ADMIN_TELEGRAM_ID:
-            await bot.send_message(ADMIN_TELEGRAM_ID, admin_text)
-        
-        if CHANNEL_ID:
-            await bot.send_message(CHANNEL_ID, admin_text)
-            
-    except Exception as e:
-        logger.error(f"Ошибка в process_contact: {e}", exc_info=True)
-
-
-# Кнопка "Оформить заявку" - запускаем анкету с выбранным тарифом
-@dp.callback_query(F.data.startswith("order_"))
-async def process_order(callback: types.CallbackQuery, state: FSMContext):
+async def process_contact(callback: types.CallbackQuery, state: FSMContext):
     try:
         plan_id = callback.data.split("_")[1]
         plan = PLANS.get(plan_id)
@@ -626,7 +589,7 @@ async def process_order(callback: types.CallbackQuery, state: FSMContext):
             await callback.answer("❌ Ошибка")
             return
         
-        logger.info(f"Пользователь оформляет заявку на тариф: {plan['name']}")
+        logger.info(f"Пользователь хочет связаться по тарифу: {plan['name']}")
         
         # Сохраняем тариф
         await state.update_data(plan_name=plan['name'], plan_id=plan_id, plan_price=plan['price'], from_bot=True)
@@ -634,7 +597,7 @@ async def process_order(callback: types.CallbackQuery, state: FSMContext):
         # Сообщение о начале анкеты
         plan_name_escaped = escape_markdown(plan['name'])
         text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\(${plan['price']}/мес\\)\n\n"
-        text += f"Отлично\\! Давайте заполним анкету\\.\n\n"
+        text += f"Отлично\\! Давайте заполним анкету, чтобы тренер мог связаться с вами\\.\n\n"
         text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
@@ -647,7 +610,7 @@ async def process_order(callback: types.CallbackQuery, state: FSMContext):
         await state.set_state(QuestionnaireStates.waiting_for_fio)
             
     except Exception as e:
-        logger.error(f"Ошибка в process_order: {e}", exc_info=True)
+        logger.error(f"Ошибка в process_contact: {e}", exc_info=True)
         await callback.answer("❌ Произошла ошибка")
 
 
