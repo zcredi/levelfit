@@ -23,7 +23,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Critical CSS inline would go here in production -->
+    <!-- Critical inline CSS for faster first paint -->
+    <style>
+        body{margin:0;padding:0;background:#0A0A0F;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+        .navbar{position:fixed;top:0;width:100%;background:rgba(10,10,15,0.7);backdrop-filter:blur(20px);z-index:1000;padding:1.8rem 0}
+        .hero{padding:140px 0 100px;min-height:100vh;display:flex;align-items:center}
+        .container{max-width:1600px;margin:0 auto;padding:0 60px}
+        @media(max-width:640px){.container{padding:0 20px}.hero{padding:120px 0 60px}}
+    </style>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
