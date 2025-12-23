@@ -49,13 +49,6 @@ img {
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
-    content-visibility: auto;
-}
-
-/* Optimize images for rendering */
-.result-image img {
-    content-visibility: auto;
-    contain-intrinsic-size: 600px 800px;
 }
 
 /* Re-enable pointer events for parent containers */
@@ -2854,12 +2847,7 @@ body::before {
     }
     
     .hero-image-container {
-        height: 350px;
-    }
-    
-    .hero-image {
-        background-size: cover;
-        background-position: center;
+        height: 400px;
     }
     
     .goal-card {
@@ -3050,12 +3038,7 @@ body::before {
     }
     
     .result-image-container {
-        height: 350px;
-    }
-    
-    .result-image img {
-        object-fit: cover;
-        max-height: 350px;
+        height: 400px;
     }
     
     .result-badge {
