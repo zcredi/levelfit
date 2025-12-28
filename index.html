@@ -190,13 +190,24 @@
     <section id="subscriptions" class="subscriptions-section">
         <div class="container">
             <h2 class="section-title">ТАРИФЫ ПОДПИСКИ</h2>
+            
+            <!-- Currency Switcher -->
+            <div class="currency-switcher-wrapper">
+                <div class="currency-switcher">
+                    <div class="currency-slider-indicator"></div>
+                    <button class="currency-btn active" data-currency="BYN" data-index="0">BYN (Br)</button>
+                    <button class="currency-btn" data-currency="RUB" data-index="1">RUB (₽)</button>
+                    <button class="currency-btn" data-currency="USD" data-index="2">USD ($)</button>
+                </div>
+            </div>
+            
             <div class="subscriptions-grid">
                 <!-- Light Plan -->
                 <div class="subscription-card">
                     <h3 class="subscription-title">ЛАЙТ</h3>
                     <div class="subscription-price-wrapper">
-                        <span class="subscription-price-old">$50</span>
-                        <div class="subscription-price">$39</div>
+                        <span class="subscription-price-old" data-usd-price="50">148 Br</span>
+                        <div class="subscription-price" data-usd-price="39">115 Br</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Кому подойдет этот тариф:</p>
@@ -221,8 +232,8 @@
                 <div class="subscription-card">
                     <h3 class="subscription-title">СТАРТ</h3>
                     <div class="subscription-price-wrapper">
-                        <span class="subscription-price-old">$90</span>
-                        <div class="subscription-price">$69</div>
+                        <span class="subscription-price-old" data-usd-price="90">266 Br</span>
+                        <div class="subscription-price" data-usd-price="69">204 Br</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Подходит для:</p>
@@ -242,8 +253,8 @@
                     <div class="recommended-badge">РЕКОМЕНДУЕТСЯ</div>
                     <h3 class="subscription-title">ОПТИМА</h3>
                     <div class="subscription-price-wrapper">
-                        <span class="subscription-price-old">$150</span>
-                        <div class="subscription-price">$99</div>
+                        <span class="subscription-price-old" data-usd-price="150">443 Br</span>
+                        <div class="subscription-price" data-usd-price="99">292 Br</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Идеально для:</p>
@@ -264,8 +275,8 @@
                 <div class="subscription-card subscription-vip" id="vip-plan">
                     <h3 class="subscription-title">ПРЕМИУМ VIP</h3>
                     <div class="subscription-price-wrapper">
-                        <span class="subscription-price-old">$350</span>
-                        <div class="subscription-price">$199</div>
+                        <span class="subscription-price-old" data-usd-price="350">1033 Br</span>
+                        <div class="subscription-price" data-usd-price="199">587 Br</div>
                     </div>
                     <div class="subscription-description">
                         <p class="subscription-subtitle">Идеально для:</p>

@@ -35,30 +35,67 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Subscription Plans Data
+// Currency Conversion Constants
+const USD_TO_BYN = 2.95;
+const USD_TO_RUB = 78;
+const DEFAULT_CURRENCY = 'BYN';
+
+// Currency Symbols
+const CURRENCY_SYMBOLS = {
+    'USD': '$',
+    'BYN': 'Br',
+    'RUB': '₽'
+};
+
+// Convert USD price to selected currency
+function convertPrice(usdPrice, currency) {
+    switch(currency) {
+        case 'BYN':
+            return Math.round(usdPrice * USD_TO_BYN);
+        case 'RUB':
+            return Math.round(usdPrice * USD_TO_RUB);
+        case 'USD':
+            return usdPrice;
+        default:
+            return Math.round(usdPrice * USD_TO_BYN); // Default to BYN
+    }
+}
+
+// Format price with currency symbol
+function formatPrice(price, currency) {
+    const symbol = CURRENCY_SYMBOLS[currency] || CURRENCY_SYMBOLS['BYN'];
+    
+    if (currency === 'USD') {
+        return `${symbol}${price}`;
+    } else {
+        return `${price} ${symbol}`;
+    }
+}
+
+// Subscription Plans Data (base prices in USD)
 const plans = {
     light: {
         name: 'ЛАЙТ',
-        price: 39,
-        currency: '$',
+        priceUSD: 39,
+        oldPriceUSD: 50,
         description: 'Самостоятельный тариф для начинающих'
     },
     start: {
         name: 'СТАРТ',
-        price: 69,
-        currency: '$',
+        priceUSD: 69,
+        oldPriceUSD: 90,
         description: 'Для начинающих с поддержкой тренера'
     },
     optimal: {
         name: 'ОПТИМА',
-        price: 99,
-        currency: '$',
+        priceUSD: 99,
+        oldPriceUSD: 150,
         description: 'Рекомендуемый тариф с регулярной поддержкой'
     },
     vip: {
         name: 'ПРЕМИУМ VIP',
-        price: 199,
-        currency: '$',
+        priceUSD: 199,
+        oldPriceUSD: 350,
         description: 'Максимальное внимание и поддержка 24/7'
     }
 };
@@ -77,9 +114,12 @@ document.querySelectorAll('.btn-service').forEach(button => {
         const plan = plans[planId];
         
         if (plan) {
-            // Redirect to Telegram bot with tariff parameter
+            // Get current currency
+            const currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
+            
+            // Redirect to Telegram bot with tariff and currency parameters
             const BOT_USERNAME = 'levelfitbot';
-            const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${planId}`;
+            const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${planId}_${currentCurrency}`;
             window.open(telegramUrl, '_blank');
         }
     });
@@ -342,8 +382,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heroCta) {
         heroCta.addEventListener('click', () => {
             if (selectedGoal) {
-                // Redirect to Telegram bot with goal parameter
-                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${selectedGoal}`;
+                // Get current currency
+                const currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
+                
+                // Redirect to Telegram bot with goal and currency parameters
+                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${selectedGoal}_${currentCurrency}`;
                 window.open(telegramUrl, '_blank');
             } else {
                 // If no goal selected, show alert
@@ -436,4 +479,70 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize position
         updateSliderPosition(50);
     });
+});
+
+// Currency Switcher Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const currencyButtons = document.querySelectorAll('.currency-btn');
+    
+    // Get saved currency from localStorage or use default
+    let currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
+    
+    // Update all prices on the page
+    function updateAllPrices(currency) {
+        currentCurrency = currency;
+        
+        // Update all subscription cards
+        document.querySelectorAll('.subscription-price').forEach(priceElement => {
+            const usdPrice = parseFloat(priceElement.getAttribute('data-usd-price'));
+            if (usdPrice) {
+                const convertedPrice = convertPrice(usdPrice, currency);
+                priceElement.textContent = formatPrice(convertedPrice, currency);
+            }
+        });
+        
+        // Update all old prices
+        document.querySelectorAll('.subscription-price-old').forEach(priceElement => {
+            const usdPrice = parseFloat(priceElement.getAttribute('data-usd-price'));
+            if (usdPrice) {
+                const convertedPrice = convertPrice(usdPrice, currency);
+                priceElement.textContent = formatPrice(convertedPrice, currency);
+            }
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('selectedCurrency', currency);
+    }
+    
+    // Set active button based on current currency
+    function setActiveButton(currency) {
+        const indicator = document.querySelector('.currency-slider-indicator');
+        
+        currencyButtons.forEach(btn => {
+            if (btn.getAttribute('data-currency') === currency) {
+                btn.classList.add('active');
+                
+                // Move the slider indicator
+                const index = parseInt(btn.getAttribute('data-index'));
+                if (indicator) {
+                    indicator.style.transform = `translateX(${index * 100}%)`;
+                }
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+    
+    // Add click handlers to currency buttons
+    currencyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedCurrency = button.getAttribute('data-currency');
+            updateAllPrices(selectedCurrency);
+            setActiveButton(selectedCurrency);
+        });
+    });
+    
+    // Initialize with saved or default currency
+    updateAllPrices(currentCurrency);
+    setActiveButton(currentCurrency);
 });

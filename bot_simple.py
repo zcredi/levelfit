@@ -36,6 +36,25 @@ GOALS = {
     'weightloss': 'Снижение веса (похудение)'
 }
 
+# Константы курсов валют
+USD_TO_BYN = 2.95
+USD_TO_RUB = 78
+DEFAULT_CURRENCY = 'BYN'
+
+# Символы валют
+CURRENCY_SYMBOLS = {
+    'USD': '$',
+    'BYN': 'Br',
+    'RUB': '₽'
+}
+
+# Названия валют
+CURRENCY_NAMES = {
+    'USD': 'Доллары США',
+    'BYN': 'Белорусские рубли',
+    'RUB': 'Российские рубли'
+}
+
 # Функция для экранирования спецсимволов MarkdownV2
 def escape_markdown(text):
     """Экранирует спецсимволы для MarkdownV2"""
@@ -43,6 +62,28 @@ def escape_markdown(text):
     for char in special_chars:
         text = text.replace(char, f'\\{char}')
     return text
+
+# Функция конвертации цен
+def convert_price(usd_price, currency='BYN'):
+    """Конвертирует цену из USD в выбранную валюту"""
+    if currency == 'BYN':
+        return round(usd_price * USD_TO_BYN)
+    elif currency == 'RUB':
+        return round(usd_price * USD_TO_RUB)
+    elif currency == 'USD':
+        return usd_price
+    else:
+        return round(usd_price * USD_TO_BYN)  # По умолчанию BYN
+
+# Функция форматирования цены
+def format_price(price, currency='BYN'):
+    """Форматирует цену с символом валюты"""
+    symbol = CURRENCY_SYMBOLS.get(currency, 'Br')
+    
+    if currency == 'USD':
+        return f"${price}"
+    else:
+        return f"{price} {symbol}"
 
 # Состояния FSM для анкеты
 class QuestionnaireStates(StatesGroup):
@@ -117,7 +158,18 @@ def get_workouts_keyboard():
 def get_main_menu_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎯 Выбрать программу", callback_data="choose_program")],
-        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data="leave_application")]
+        [InlineKeyboardButton(text="📋 Оставить заявку", callback_data="leave_application")],
+        [InlineKeyboardButton(text="💱 Выбрать валюту", callback_data="change_currency")]
+    ])
+    return keyboard
+
+# Клавиатура выбора валюты
+def get_currency_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🇧🇾 Белорусские рубли (Br)", callback_data="currency_BYN")],
+        [InlineKeyboardButton(text="🇷🇺 Российские рубли (₽)", callback_data="currency_RUB")],
+        [InlineKeyboardButton(text="🇺🇸 Доллары США ($)", callback_data="currency_USD")],
+        [InlineKeyboardButton(text="◀️ Назад", callback_data="back_to_main")]
     ])
     return keyboard
 
@@ -132,10 +184,12 @@ def get_goals_keyboard():
     return keyboard
 
 # Функция для создания клавиатуры с тарифами
-def get_plans_keyboard():
+def get_plans_keyboard(currency='BYN'):
     buttons = []
     for plan_id, plan in PLANS.items():
-        text = f"{plan['emoji']} {plan['name']} - ${plan['price']}"
+        converted_price = convert_price(plan['price'], currency)
+        formatted_price = format_price(converted_price, currency)
+        text = f"{plan['emoji']} {plan['name']} - {formatted_price}"
         if plan.get('recommended'):
             text += " ⭐️"
         buttons.append([InlineKeyboardButton(text=text, callback_data=f"plan_{plan_id}")])
@@ -184,6 +238,20 @@ async def cmd_start(message: types.Message, state: FSMContext):
             param = args[1].lower()
             logger.info(f"Получен параметр: {param}")
             
+            # Парсим валюту из параметра (формат: plan_CURRENCY или goal_CURRENCY)
+            selected_currency = DEFAULT_CURRENCY
+            if '_' in param:
+                parts = param.split('_')
+                if len(parts) == 2:
+                    param = parts[0]  # Первая часть - plan/goal
+                    currency_code = parts[1].upper()
+                    if currency_code in CURRENCY_SYMBOLS:
+                        selected_currency = currency_code
+                        logger.info(f"Установлена валюта из сайта: {selected_currency}")
+            
+            # Устанавливаем валюту в state
+            await state.update_data(currency=selected_currency)
+            
             # Проверяем, это цель с сайта или тариф
             if param in GOALS:
                 # Это цель с сайта (кнопка "НАЧАТЬ ПРОГРАММУ")
@@ -217,10 +285,13 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 # Сохраняем тариф
                 await state.update_data(plan_name=plan['name'], plan_id=param, plan_price=plan['price'], from_website=True)
                 
+                # Форматируем цену в валюте по умолчанию
+                price_formatted = escape_markdown(format_price(convert_price(plan['price'], DEFAULT_CURRENCY), DEFAULT_CURRENCY))
+                
                 # Приветствие
                 plan_name_escaped = escape_markdown(plan['name'])
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
-                text += f"Вы выбрали тариф: {plan['emoji']} *{plan_name_escaped}* \\(${plan['price']}/мес\\)\n\n"
+                text += f"Вы выбрали тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
                 text += f"Давайте заполним анкету для создания персональной программы\\.\n\n"
                 text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
                 
@@ -237,6 +308,11 @@ async def cmd_start(message: types.Message, state: FSMContext):
         
         # Показываем главное меню (если без параметра или неизвестный параметр)
         logger.info("Показываем главное меню")
+        
+        # Устанавливаем валюту по умолчанию если не была установлена
+        data = await state.get_data()
+        if 'currency' not in data:
+            await state.update_data(currency=DEFAULT_CURRENCY)
         
         text = "🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
         text += "💪 Онлайн тренировки и персональные программы питания\n\n"
@@ -389,7 +465,11 @@ async def process_weight(message: types.Message, state: FSMContext):
         # Добавляем тариф если выбран
         if data.get('plan_name'):
             plan_name = escape_markdown(data.get('plan_name', ''))
-            channel_text += f"💎 *Тариф:* {plan_name} \\(${data.get('plan_price', 0)}/мес\\)\n"
+            plan_price_usd = data.get('plan_price', 0)
+            currency = data.get('currency', DEFAULT_CURRENCY)
+            price_converted = convert_price(plan_price_usd, currency)
+            price_formatted = escape_markdown(format_price(price_converted, currency))
+            channel_text += f"💎 *Тариф:* {plan_name} \\({price_formatted}/мес\\)\n"
         
         # Добавляем цель если выбрана
         if data.get('goal'):
@@ -434,10 +514,14 @@ async def process_leave_application(callback: types.CallbackQuery):
 
 # Кнопка "Выбрать программу" - показываем тарифы
 @dp.callback_query(F.data == "choose_program")
-async def process_choose_program(callback: types.CallbackQuery):
+async def process_choose_program(callback: types.CallbackQuery, state: FSMContext):
     try:
+        # Получаем валюту из state
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        
         text = "🎯 *Выберите подходящий тариф:*"
-        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
+        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(currency), parse_mode="MarkdownV2")
         await callback.answer()
     except Exception as e:
         logger.error(f"Ошибка в process_choose_program: {e}", exc_info=True)
@@ -497,7 +581,7 @@ async def process_goal_selection(callback: types.CallbackQuery, state: FSMContex
 
 
 # Показать детали тарифа
-async def show_plan_details(message_or_callback, plan_id: str):
+async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
     try:
         plan = PLANS.get(plan_id)
         
@@ -506,6 +590,12 @@ async def show_plan_details(message_or_callback, plan_id: str):
             return
         
         discount = int(((plan['old_price'] - plan['price']) / plan['old_price']) * 100)
+        
+        # Конвертируем цены
+        current_price = convert_price(plan['price'], currency)
+        old_price = convert_price(plan['old_price'], currency)
+        formatted_current = format_price(current_price, currency)
+        formatted_old = format_price(old_price, currency)
         
         # Используем MarkdownV2 для зачеркивания
         text = f"{plan['emoji']} *{plan['name']}*\n\n"
@@ -532,8 +622,11 @@ async def show_plan_details(message_or_callback, plan_id: str):
             text += "🧠 Психологическая поддержка\n"
             text += "💊 Рекомендации по добавкам\n"
         
-        # Зачеркнутая старая цена и новая цена
-        text += f"\n💰 Цена: ~${plan['old_price']}~ → *${plan['price']}/месяц*\n"
+        # Зачеркнутая старая цена и новая цена (экранируем символы)
+        formatted_old_escaped = escape_markdown(formatted_old)
+        formatted_current_escaped = escape_markdown(formatted_current)
+        
+        text += f"\n💰 Цена: ~{formatted_old_escaped}~ → *{formatted_current_escaped}/месяц*\n"
         text += f"🎁 Скидка: *{discount}%*\n"
         
         if plan.get('recommended'):
@@ -556,11 +649,16 @@ async def show_plan_details(message_or_callback, plan_id: str):
 
 # Обработка выбора тарифа
 @dp.callback_query(F.data.startswith("plan_"))
-async def process_plan_selection(callback: types.CallbackQuery):
+async def process_plan_selection(callback: types.CallbackQuery, state: FSMContext):
     try:
         plan_id = callback.data.split("_")[1]
         logger.info(f"Выбран тариф {plan_id} пользователем {callback.from_user.id}")
-        await show_plan_details(callback, plan_id)
+        
+        # Получаем валюту из state
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        
+        await show_plan_details(callback, plan_id, currency)
         await callback.answer()
     except Exception as e:
         logger.error(f"Ошибка в process_plan_selection: {e}", exc_info=True)
@@ -569,10 +667,14 @@ async def process_plan_selection(callback: types.CallbackQuery):
 
 # Кнопка "Назад к тарифам"
 @dp.callback_query(F.data == "back_to_plans")
-async def back_to_plans(callback: types.CallbackQuery):
+async def back_to_plans(callback: types.CallbackQuery, state: FSMContext):
     try:
+        # Получаем валюту из state
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        
         text = "🎯 *Выберите подходящий тариф:*"
-        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(), parse_mode="MarkdownV2")
+        await callback.message.edit_text(text, reply_markup=get_plans_keyboard(currency), parse_mode="MarkdownV2")
         await callback.answer()
     except Exception as e:
         logger.error(f"Ошибка в back_to_plans: {e}", exc_info=True)
@@ -594,9 +696,15 @@ async def process_contact(callback: types.CallbackQuery, state: FSMContext):
         # Сохраняем тариф
         await state.update_data(plan_name=plan['name'], plan_id=plan_id, plan_price=plan['price'], from_bot=True)
         
+        # Получаем валюту
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        price_converted = convert_price(plan['price'], currency)
+        price_formatted = escape_markdown(format_price(price_converted, currency))
+        
         # Сообщение о начале анкеты
         plan_name_escaped = escape_markdown(plan['name'])
-        text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\(${plan['price']}/мес\\)\n\n"
+        text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
         text += f"Отлично\\! Давайте заполним анкету, чтобы тренер мог связаться с вами\\.\n\n"
         text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
         
@@ -613,6 +721,58 @@ async def process_contact(callback: types.CallbackQuery, state: FSMContext):
         logger.error(f"Ошибка в process_contact: {e}", exc_info=True)
         await callback.answer("❌ Произошла ошибка")
 
+
+# Обработчик кнопки "Выбрать валюту"
+@dp.callback_query(F.data == "change_currency")
+async def process_change_currency(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        # Получаем текущую валюту
+        data = await state.get_data()
+        current_currency = data.get('currency', DEFAULT_CURRENCY)
+        currency_name = CURRENCY_NAMES.get(current_currency, CURRENCY_NAMES[DEFAULT_CURRENCY])
+        
+        text = f"💱 *Выбор валюты*\n\n"
+        text += f"Текущая валюта: *{escape_markdown(currency_name)}*\n\n"
+        text += f"Выберите валюту для отображения цен:"
+        
+        await callback.message.edit_text(text, reply_markup=get_currency_keyboard(), parse_mode="MarkdownV2")
+        await callback.answer()
+    except Exception as e:
+        logger.error(f"Ошибка в process_change_currency: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
+
+# Обработчик выбора валюты
+@dp.callback_query(F.data.startswith("currency_"))
+async def process_currency_selection(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        currency = callback.data.split("_")[1]  # BYN, RUB, USD
+        
+        if currency not in CURRENCY_SYMBOLS:
+            await callback.answer("❌ Неизвестная валюта")
+            return
+        
+        # Сохраняем валюту
+        await state.update_data(currency=currency)
+        
+        currency_name = CURRENCY_NAMES.get(currency, currency)
+        text = f"✅ Валюта изменена на: *{escape_markdown(currency_name)}*\n\n"
+        text += f"Теперь все цены будут отображаться в этой валюте\\."
+        
+        await callback.message.edit_text(text, parse_mode="MarkdownV2")
+        await callback.answer(f"✅ Выбрано: {currency_name}")
+        
+        # Задержка перед возвратом в главное меню
+        await asyncio.sleep(1)
+        
+        text = "🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
+        text += "💪 Онлайн тренировки и персональные программы питания\n\n"
+        text += "Что вы хотите сделать?"
+        
+        await callback.message.edit_text(text, reply_markup=get_main_menu_keyboard(), parse_mode="MarkdownV2")
+        
+    except Exception as e:
+        logger.error(f"Ошибка в process_currency_selection: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
 
 # Обработка текста (только если нет активной анкеты)
 @dp.message(F.text)
