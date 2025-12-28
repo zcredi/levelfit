@@ -242,15 +242,22 @@ async def cmd_start(message: types.Message, state: FSMContext):
             selected_currency = DEFAULT_CURRENCY
             if '_' in param:
                 parts = param.split('_')
+                logger.info(f"Парсинг параметра: {parts}")
                 if len(parts) == 2:
                     param = parts[0]  # Первая часть - plan/goal
                     currency_code = parts[1].upper()
+                    logger.info(f"Код валюты из параметра: {currency_code}")
                     if currency_code in CURRENCY_SYMBOLS:
                         selected_currency = currency_code
-                        logger.info(f"Установлена валюта из сайта: {selected_currency}")
+                        logger.info(f"✅ Валюта установлена из сайта: {selected_currency}")
+                    else:
+                        logger.warning(f"❌ Неизвестный код валюты: {currency_code}")
+            else:
+                logger.info(f"Валюта не передана, используется по умолчанию: {DEFAULT_CURRENCY}")
             
             # Устанавливаем валюту в state
             await state.update_data(currency=selected_currency)
+            logger.info(f"Валюта сохранена в state: {selected_currency}")
             
             # Проверяем, это цель с сайта или тариф
             if param in GOALS:
@@ -285,8 +292,12 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 # Сохраняем тариф
                 await state.update_data(plan_name=plan['name'], plan_id=param, plan_price=plan['price'], from_website=True)
                 
-                # Форматируем цену в валюте по умолчанию
-                price_formatted = escape_markdown(format_price(convert_price(plan['price'], DEFAULT_CURRENCY), DEFAULT_CURRENCY))
+                # Получаем валюту из state (уже установлена выше)
+                data = await state.get_data()
+                currency = data.get('currency', DEFAULT_CURRENCY)
+                
+                # Форматируем цену в выбранной валюте
+                price_formatted = escape_markdown(format_price(convert_price(plan['price'], currency), currency))
                 
                 # Приветствие
                 plan_name_escaped = escape_markdown(plan['name'])
