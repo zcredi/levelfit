@@ -218,11 +218,8 @@ def get_payment_keyboard(plan_id: str, currency: str = 'BYN'):
     buttons = []
     
     if plan:
-        # Для BYN - кнопка "Оплатить" запускает анкету
-        if currency == 'BYN':
-            buttons.append([InlineKeyboardButton(text="💳 Оплатить", callback_data=f"contact_{plan_id}")])
         # Для RUB и USD - кнопка "Оплатить" ведет на Tribute
-        elif currency in ['RUB', 'USD']:
+        if currency in ['RUB', 'USD']:
             tribute_links = plan.get('tribute_links', {})
             tribute_link = tribute_links.get(currency)
             if tribute_link:
