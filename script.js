@@ -8,6 +8,18 @@ if (menuToggle && navMenu) {
     });
 }
 
+// Support Button - Open Crisp Chat
+const supportBtn = document.getElementById('supportBtn');
+if (supportBtn) {
+    supportBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Open Crisp chat
+        if (window.$crisp) {
+            window.$crisp.push(['do', 'chat:open']);
+        }
+    });
+}
+
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-menu a').forEach(link => {
     link.addEventListener('click', () => {
