@@ -52,7 +52,7 @@
                     <div class="logo-text">LEVEL FIT</div>
                 </a>
                 <div class="nav-menu-right">
-                    <a href="#vip-plan" class="nav-link-premium">ПРЕМИУМ АККАУНТ</a>
+                    <a href="javascript:void(0)" class="nav-link-premium" id="premiumBtn" onclick="scrollToVIP()">ПРЕМИУМ АККАУНТ</a>
                     <a href="#" class="nav-link-support" id="supportBtn">ПОДДЕРЖКА</a>
                 </div>
                 <button class="menu-toggle" aria-label="Toggle menu">
@@ -952,6 +952,49 @@
             </form>
         </div>
     </div>
+
+    <!-- Функция прокрутки к VIP тарифу -->
+    <script>
+        function scrollToVIP() {
+            const vipSection = document.getElementById('vip-plan');
+            if (!vipSection) {
+                return;
+            }
+            
+            // Закрываем мобильное меню
+            const mobileMenu = document.querySelector('.nav-menu-left');
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+            }
+            
+            // Получаем высоту navbar
+            const navbar = document.querySelector('.navbar');
+            const navbarHeight = navbar ? navbar.offsetHeight : 100;
+            
+            // Вычисляем позицию для прокрутки
+            const rect = vipSection.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetPosition = rect.top + scrollTop - navbarHeight - 30;
+            
+            // Прокручиваем
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            // Визуальный эффект
+            setTimeout(() => {
+                vipSection.style.transition = 'all 0.4s ease';
+                vipSection.style.transform = 'scale(1.03)';
+                vipSection.style.boxShadow = '0 0 60px rgba(255, 215, 0, 0.6)';
+                
+                setTimeout(() => {
+                    vipSection.style.transform = 'scale(1)';
+                    vipSection.style.boxShadow = '';
+                }, 600);
+            }, 800);
+        }
+    </script>
 
     <script src="script.js" defer></script>
 

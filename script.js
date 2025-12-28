@@ -20,8 +20,10 @@ if (supportBtn) {
     });
 }
 
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-menu a').forEach(link => {
+// Premium Account Button - использует inline обработчик onclick="scrollToVIP()" в HTML
+
+// Close mobile menu when clicking on a link (кроме кнопки премиум - у неё свой обработчик)
+document.querySelectorAll('.nav-menu-left a').forEach(link => {
     link.addEventListener('click', () => {
         if (navMenu) {
             navMenu.classList.remove('active');
@@ -32,13 +34,18 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
 // Smooth Scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        // Пропускаем кнопку премиум аккаунт - у неё есть свой обработчик
+        if (this.classList.contains('nav-link-premium')) return;
+        
         e.preventDefault();
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
         
         const target = document.querySelector(targetId);
         if (target) {
-            const offsetTop = target.offsetTop - 100;
+            // Увеличенный offset для компенсации высоты navbar
+            const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 120;
+            const offsetTop = target.offsetTop - navbarHeight - 20; // дополнительные 20px для отступа
             window.scrollTo({
                 top: offsetTop,
                 behavior: 'smooth'
@@ -176,7 +183,6 @@ if (subscriptionForm) {
             };
             
             // Here you would typically send this data to your backend
-            console.log('Subscription Data:', data);
             
             // Show success message
             alert(`Спасибо, ${data.name}! Ваша заявка на подписку "${plan.name}" принята. Мы свяжемся с вами в ближайшее время.`);
@@ -212,7 +218,6 @@ if (goalForm) {
             }
             
             // You can store the selected goal for later use
-            console.log('Selected goal:', goalText);
         } else {
             alert('Пожалуйста, выберите цель');
         }
@@ -366,8 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Save selected goal
             selectedGoal = card.getAttribute('data-goal');
-            const goalTitle = card.querySelector('.goal-card-title')?.textContent;
-            console.log('Выбрана цель:', goalTitle, '(', selectedGoal, ')');
             
             // Scroll to button smoothly
             if (heroCta) {
