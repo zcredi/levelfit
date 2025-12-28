@@ -102,14 +102,20 @@ PLANS = {
         'price': 39,
         'old_price': 50,
         'emoji': '🥉',
-        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8Q'
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q',
+            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+        }
     },
     'start': {
         'name': 'СТАРТ',
         'price': 69,
         'old_price': 90,
         'emoji': '🥈',
-        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8R'
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8R',
+            'USD': 'https://t.me/tribute/app?startapp=sJD8'
+        }
     },
     'optimal': {
         'name': 'ОПТИМА',
@@ -117,14 +123,20 @@ PLANS = {
         'old_price': 150,
         'emoji': '🥇',
         'recommended': True,
-        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8S'
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8S',
+            'USD': 'https://t.me/tribute/app?startapp=sJD3'
+        }
     },
     'vip': {
         'name': 'ПРЕМИУМ VIP',
         'price': 199,
         'old_price': 350,
         'emoji': '👑',
-        'tribute_link': 'https://t.me/tribute/app?startapp=sJ8P'
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8P',
+            'USD': 'https://t.me/tribute/app?startapp=sJDd'
+        }
     }
 }
 
@@ -201,16 +213,23 @@ def get_plans_keyboard(currency='BYN'):
 
 
 # Функция для создания клавиатуры для тарифа
-def get_payment_keyboard(plan_id: str):
+def get_payment_keyboard(plan_id: str, currency: str = 'BYN'):
     plan = PLANS.get(plan_id)
     buttons = []
     
-    # Кнопка оплаты через Tribute
-    if plan and plan.get('tribute_link'):
-        buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=plan['tribute_link'])])
+    if plan:
+        # Для BYN - кнопка "Оплатить" запускает анкету
+        if currency == 'BYN':
+            buttons.append([InlineKeyboardButton(text="💳 Оплатить", callback_data=f"contact_{plan_id}")])
+        # Для RUB и USD - кнопка "Оплатить" ведет на Tribute
+        elif currency in ['RUB', 'USD']:
+            tribute_links = plan.get('tribute_links', {})
+            tribute_link = tribute_links.get(currency)
+            if tribute_link:
+                buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=tribute_link)])
     
-    # Кнопка связаться с тренером (запускает анкету)
-    buttons.append([InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")])
+    # Кнопка связаться с менеджером (запускает анкету)
+    buttons.append([InlineKeyboardButton(text="💬 Связаться с менеджером", callback_data=f"contact_{plan_id}")])
     
     # Навигация
     buttons.append([InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")])
@@ -453,7 +472,7 @@ async def process_weight(message: types.Message, state: FSMContext):
         
         # Формируем сообщение для пользователя
         user_text = "✅ *Анкета заполнена\\!*\n\n"
-        user_text += "Спасибо\\! Тренер свяжется с вами в ближайшее время\\.\n\n"
+        user_text += "Спасибо\\! Менеджер свяжется с вами в ближайшее время\\.\n\n"
         user_text += "💪 Начинайте готовиться к трансформации\\!"
         
         await message.answer(user_text, parse_mode="MarkdownV2")
@@ -643,9 +662,9 @@ async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
         if plan.get('recommended'):
             text += "\n⭐️ *РЕКОМЕНДУЕМЫЙ ТАРИФ* ⭐️\n"
         
-        text += "\n💳 *Оплатите онлайн* или заполните заявку для связи с тренером\\."
+        text += "\n💳 *Оплатите онлайн* или заполните заявку для связи с менеджером\\."
         
-        keyboard = get_payment_keyboard(plan_id)
+        keyboard = get_payment_keyboard(plan_id, currency)
         
         if isinstance(message_or_callback, types.Message):
             await message_or_callback.answer(text, reply_markup=keyboard, parse_mode="MarkdownV2")
@@ -716,7 +735,7 @@ async def process_contact(callback: types.CallbackQuery, state: FSMContext):
         # Сообщение о начале анкеты
         plan_name_escaped = escape_markdown(plan['name'])
         text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
-        text += f"Отлично\\! Давайте заполним анкету, чтобы тренер мог связаться с вами\\.\n\n"
+        text += f"Отлично\\! Давайте заполним анкету, чтобы менеджер мог связаться с вами\\.\n\n"
         text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
