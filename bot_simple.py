@@ -224,9 +224,12 @@ def get_payment_keyboard(plan_id: str, currency: str = 'BYN'):
             tribute_link = tribute_links.get(currency)
             if tribute_link:
                 buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=tribute_link)])
+        # Для BYN - кнопка "Оплатить" тоже есть, но запускает анкету
+        else:
+            buttons.append([InlineKeyboardButton(text="💳 Оплатить", callback_data=f"pay_byn_{plan_id}")])
     
-    # Кнопка связаться с менеджером (запускает анкету)
-    buttons.append([InlineKeyboardButton(text="💬 Связаться с менеджером", callback_data=f"contact_{plan_id}")])
+    # Кнопка связаться с тренером (запускает анкету)
+    buttons.append([InlineKeyboardButton(text="💬 Связаться с тренером", callback_data=f"contact_{plan_id}")])
     
     # Навигация
     buttons.append([InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")])
@@ -469,7 +472,7 @@ async def process_weight(message: types.Message, state: FSMContext):
         
         # Формируем сообщение для пользователя
         user_text = "✅ *Анкета заполнена\\!*\n\n"
-        user_text += "Спасибо\\! Менеджер свяжется с вами в ближайшее время\\.\n\n"
+        user_text += "Спасибо\\! Тренер свяжется с вами в ближайшее время\\.\n\n"
         user_text += "💪 Начинайте готовиться к трансформации\\!"
         
         await message.answer(user_text, parse_mode="MarkdownV2")
@@ -659,7 +662,7 @@ async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
         if plan.get('recommended'):
             text += "\n⭐️ *РЕКОМЕНДУЕМЫЙ ТАРИФ* ⭐️\n"
         
-        text += "\n💳 *Оплатите онлайн* или заполните заявку для связи с менеджером\\."
+        text += "\n💳 *Оплатите онлайн* или заполните заявку для связи с тренером\\."
         
         keyboard = get_payment_keyboard(plan_id, currency)
         
@@ -707,6 +710,47 @@ async def back_to_plans(callback: types.CallbackQuery, state: FSMContext):
         logger.error(f"Ошибка в back_to_plans: {e}", exc_info=True)
 
 
+# Кнопка "Оплатить" для BYN - запускаем анкету
+@dp.callback_query(F.data.startswith("pay_byn_"))
+async def process_pay_byn(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        plan_id = callback.data.split("_")[2]  # pay_byn_light -> light
+        plan = PLANS.get(plan_id)
+        
+        if not plan:
+            await callback.answer("❌ Ошибка")
+            return
+        
+        logger.info(f"Оплата BYN для тарифа: {plan['name']}")
+        
+        # Сохраняем тариф
+        await state.update_data(plan_name=plan['name'], plan_id=plan_id, plan_price=plan['price'], from_bot=True)
+        
+        # Получаем валюту
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        price_converted = convert_price(plan['price'], currency)
+        price_formatted = escape_markdown(format_price(price_converted, currency))
+        
+        # Сообщение о начале анкеты
+        plan_name_escaped = escape_markdown(plan['name'])
+        text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
+        text += f"Отлично\\! Давайте заполним анкету для оформления\\.\n\n"
+        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+        
+        await callback.message.edit_text(text, parse_mode="MarkdownV2")
+        await callback.answer()
+        
+        # Задаем первый вопрос
+        await asyncio.sleep(1)
+        text_q1 = "1️⃣ *Укажите свои ФИО*\n\nНапример: Иванов Иван Иванович"
+        await callback.message.answer(text_q1, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_fio)
+            
+    except Exception as e:
+        logger.error(f"Ошибка в process_pay_byn: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
+
 # Кнопка "Связаться с тренером" - запускаем анкету с выбранным тарифом
 @dp.callback_query(F.data.startswith("contact_"))
 async def process_contact(callback: types.CallbackQuery, state: FSMContext):
@@ -732,7 +776,7 @@ async def process_contact(callback: types.CallbackQuery, state: FSMContext):
         # Сообщение о начале анкеты
         plan_name_escaped = escape_markdown(plan['name'])
         text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
-        text += f"Отлично\\! Давайте заполним анкету, чтобы менеджер мог связаться с вами\\.\n\n"
+        text += f"Отлично\\! Давайте заполним анкету, чтобы тренер мог связаться с вами\\.\n\n"
         text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
