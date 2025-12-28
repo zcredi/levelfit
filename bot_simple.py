@@ -308,30 +308,19 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 plan = PLANS[param]
                 logger.info(f"Пользователь выбрал тариф с сайта: {plan['name']}")
                 
-                # Сохраняем тариф
-                await state.update_data(plan_name=plan['name'], plan_id=param, plan_price=plan['price'], from_website=True)
-                
                 # Получаем валюту из state (уже установлена выше)
                 data = await state.get_data()
                 currency = data.get('currency', DEFAULT_CURRENCY)
                 
-                # Форматируем цену в выбранной валюте
-                price_formatted = escape_markdown(format_price(convert_price(plan['price'], currency), currency))
-                
                 # Приветствие
-                plan_name_escaped = escape_markdown(plan['name'])
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
-                text += f"Вы выбрали тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
-                text += f"Давайте заполним анкету для создания персональной программы\\.\n\n"
-                text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+                text += f"Вы выбрали отличный тариф\\!"
                 
                 await message.answer(text, parse_mode="MarkdownV2")
                 
-                # Задаем первый вопрос
-                await asyncio.sleep(1)
-                text_q1 = "1️⃣ *Укажите свои ФИО*\n\nНапример: Иванов Иван Иванович"
-                await message.answer(text_q1, parse_mode="MarkdownV2")
-                await state.set_state(QuestionnaireStates.waiting_for_fio)
+                # Показываем детали тарифа с кнопками
+                await asyncio.sleep(0.5)
+                await show_plan_details(message, param, currency)
                 return
             else:
                 logger.warning(f"Неизвестный параметр: {param}")
