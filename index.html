@@ -12,9 +12,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="LEVEL FIT - Персональные онлайн тренировки и индивидуальные планы питания. Достигни своей цели с профессиональным тренером.">
+    <meta name="author" content="Денис Гордейчик">
+    <meta name="keywords" content="Денис Гордейчик, персональный тренер, онлайн тренировки, фитнес, план питания, набор массы, похудение, коррекция фигуры">
     <meta name="theme-color" content="#FFD700">
     <meta name="google-site-verification" content="yCuoGgMP81NpASAoCHFrfJUVRdvlLzN2DsxeecYo-5I">
-    <title>LEVEL FIT - Онлайн Тренировки и Питание</title>
+    <title>LEVEL FIT - Онлайн Тренировки и Питание | Тренер Денис Гордейчик</title>
     
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
@@ -57,6 +59,7 @@
         .hero{padding:140px 0 100px;min-height:100vh;display:flex;align-items:center}
         .container{max-width:1600px;margin:0 auto;padding:0 60px}
         @media(max-width:640px){.container{padding:0 20px}.hero{padding:120px 0 60px}}
+        .seo-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
     </style>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -160,10 +163,10 @@
         <div class="container">
             <div class="trainer-wrapper">
                 <div class="trainer-content">
-                    <p class="trainer-badge">Денис — твой тренер</p>
+                    <p class="trainer-badge">Денис<span class="seo-hidden"> Гордейчик</span> — твой тренер</p>
                     <h2 class="trainer-title">Системный подход, подтверждённый сценой и опытом</h2>
                     <p class="trainer-text">
-                        Денис — дипломированный специалист и многократный призёр чемпионатов по фитнес-бикини. После бронзы на Чемпионате РБ 2016 он дважды взял серебро: на первенстве Минской области 2016 и на Чемпионате Курской области 2017. 
+                        Денис<span class="seo-hidden"> Гордейчик</span> — дипломированный специалист и многократный призёр чемпионатов по фитнес-бикини. После бронзы на Чемпионате РБ 2016 он дважды взял серебро: на первенстве Минской области 2016 и на Чемпионате Курской области 2017. 
                         Его ключевая задача — перевести твои цели в чёткий план тренировок, питания и восстановления, который реально вписывается в жизнь.
                     </p>
 
@@ -985,6 +988,36 @@
         </div>
     </div>
 
+    <!-- Schema.org микроразметка для SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Денис Гордейчик",
+        "givenName": "Денис",
+        "familyName": "Гордейчик",
+        "jobTitle": "Персональный тренер",
+        "description": "Дипломированный специалист и многократный призёр чемпионатов по фитнес-бикини",
+        "url": "https://levelfit.online",
+        "affiliation": {
+            "@type": "Organization",
+            "name": "LEVEL FIT"
+        },
+        "award": [
+            "Бронзовый призёр Чемпионата Республики Беларусь 2016",
+            "Серебряный призёр первенства Минской области 2016",
+            "Серебряный призёр Чемпионата Курской области 2017"
+        ],
+        "knowsAbout": [
+            "Снижение веса",
+            "Набор мышечной массы",
+            "Коррекция фигуры",
+            "Персональные тренировки",
+            "План питания"
+        ]
+    }
+    </script>
+    
     <!-- Функция прокрутки к VIP тарифу -->
     <script>
         function scrollToVIP() {
