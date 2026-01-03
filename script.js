@@ -96,25 +96,25 @@ const plans = {
     light: {
         name: 'ЛАЙТ',
         priceUSD: 39,
-        oldPriceUSD: 50,
+        oldPriceUSD: 49,
         description: 'Самостоятельный тариф для начинающих'
     },
     start: {
         name: 'СТАРТ',
         priceUSD: 69,
-        oldPriceUSD: 90,
+        oldPriceUSD: 89,
         description: 'Для начинающих с поддержкой тренера'
     },
     optimal: {
         name: 'ОПТИМА',
         priceUSD: 99,
-        oldPriceUSD: 150,
+        oldPriceUSD: 129,
         description: 'Рекомендуемый тариф с регулярной поддержкой'
     },
     vip: {
         name: 'ПРЕМИУМ VIP',
         priceUSD: 199,
-        oldPriceUSD: 350,
+        oldPriceUSD: 259,
         description: 'Максимальное внимание и поддержка 24/7'
     }
 };
