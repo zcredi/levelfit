@@ -20,6 +20,22 @@ if (supportBtn) {
     });
 }
 
+// Support Button Mobile - Open Crisp Chat
+const supportBtnMobile = document.getElementById('supportBtnMobile');
+if (supportBtnMobile) {
+    supportBtnMobile.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Close mobile menu
+        if (navMenu) {
+            navMenu.classList.remove('active');
+        }
+        // Open Crisp chat
+        if (window.$crisp) {
+            window.$crisp.push(['do', 'chat:open']);
+        }
+    });
+}
+
 // Premium Account Button - использует inline обработчик onclick="scrollToVIP()" в HTML
 
 // Close mobile menu when clicking on a link (кроме кнопки премиум - у неё свой обработчик)
@@ -267,24 +283,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (faqItems.length) {
         faqItems.forEach(item => {
             const questionButton = item.querySelector('.faq-question');
-            const answer = item.querySelector('.faq-answer');
 
-            if (questionButton && answer) {
+            if (questionButton) {
                 questionButton.addEventListener('click', () => {
                     const isExpanded = questionButton.getAttribute('aria-expanded') === 'true';
 
+                    // Close all other items
                     faqItems.forEach(otherItem => {
                         if (otherItem === item) {
                             return;
                         }
                         const otherButton = otherItem.querySelector('.faq-question');
-                        const otherAnswer = otherItem.querySelector('.faq-answer');
-                        if (otherButton && otherAnswer) {
+                        if (otherButton) {
                             otherItem.classList.remove('active');
                             otherButton.setAttribute('aria-expanded', 'false');
                         }
                     });
 
+                    // Toggle current item
                     if (!isExpanded) {
                         item.classList.add('active');
                         questionButton.setAttribute('aria-expanded', 'true');
@@ -309,8 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (heroSection) {
                         const heroHeight = heroSection.offsetHeight;
                         if (scrolled < heroHeight) {
-                            const rate = scrolled * 0.2;
+                            // Уменьшен коэффициент с 0.2 до 0.1 и добавлено ограничение
+                            const rate = Math.min(scrolled * 0.1, 100);
                             heroImage.style.transform = `translateY(${rate}px)`;
+                        } else {
+                            // Сброс позиции после выхода из hero секции
+                            heroImage.style.transform = `translateY(0)`;
                         }
                     }
                     ticking = false;
@@ -352,60 +372,63 @@ document.querySelectorAll('.radio-input').forEach(radio => {
     });
 });
 
-// Hero Goal Cards - Selection and Redirect to Bot
+// Hero Goal Cards - Multiple Selection and Redirect to Bot
 document.addEventListener('DOMContentLoaded', () => {
     const goalCards = document.querySelectorAll('.goal-card');
     const heroCta = document.getElementById('heroCtaBtn');
-    let selectedGoal = null;
+    const easterEggMessage = document.getElementById('easterEggMessage');
+    let selectedGoals = new Set();
     
     // Telegram Bot Username
     const BOT_USERNAME = 'levelfitbot';
     
     goalCards.forEach(card => {
         card.addEventListener('click', () => {
-            // Remove selected class from all cards
-            goalCards.forEach(c => c.classList.remove('selected'));
+            const goalId = card.getAttribute('data-goal');
             
-            // Add selected class to clicked card
-            card.classList.add('selected');
+            // Toggle selection
+            if (card.classList.contains('selected')) {
+                card.classList.remove('selected');
+                selectedGoals.delete(goalId);
+            } else {
+                card.classList.add('selected');
+                selectedGoals.add(goalId);
+            }
             
-            // Save selected goal
-            selectedGoal = card.getAttribute('data-goal');
-            
-            // Scroll to button smoothly
-            if (heroCta) {
-                const buttonPosition = heroCta.getBoundingClientRect().top + window.pageYOffset;
-                const offset = window.innerHeight / 2 - heroCta.offsetHeight / 2;
-                
-                window.scrollTo({
-                    top: buttonPosition - offset,
-                    behavior: 'smooth'
-                });
-                
-                // Add pulse animation to CTA button after scroll
-                setTimeout(() => {
-                    heroCta.classList.add('btn-pulse');
-                    setTimeout(() => {
-                        heroCta.classList.remove('btn-pulse');
-                    }, 1000);
-                }, 500);
+            // Check if all goals are selected (Easter Egg!)
+            if (selectedGoals.size === 3) {
+                // Show easter egg message
+                if (easterEggMessage) {
+                    easterEggMessage.classList.add('show');
+                }
+            } else {
+                // Hide easter egg message
+                if (easterEggMessage) {
+                    easterEggMessage.classList.remove('show');
+                }
             }
         });
     });
     
-    // CTA button redirects to Telegram bot with selected goal
+    // CTA button redirects to Telegram bot with selected goals
     if (heroCta) {
         heroCta.addEventListener('click', () => {
-            if (selectedGoal) {
+            if (selectedGoals.size > 0) {
                 // Get current currency
                 const currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
                 
-                // Redirect to Telegram bot with goal and currency parameters
-                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${selectedGoal}_${currentCurrency}`;
+                // Join multiple goals with underscore
+                const goalsParam = Array.from(selectedGoals).join('-');
+                
+                // Add discount flag if all goals selected
+                const discountParam = selectedGoals.size === 3 ? '_discount5' : '';
+                
+                // Redirect to Telegram bot with goals, currency and discount parameters
+                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${goalsParam}_${currentCurrency}${discountParam}`;
                 window.open(telegramUrl, '_blank');
             } else {
                 // If no goal selected, show alert
-                alert('Пожалуйста, выберите цель тренировок');
+                alert('Пожалуйста, выберите хотя бы одну цель тренировок');
             }
         });
     }
