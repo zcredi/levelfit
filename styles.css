@@ -2560,44 +2560,24 @@ body::before {
     margin: 0;
 }
 
-/* SEO Content Section */
+/* SEO Content Section - Hidden for users, visible for search engines */
 .seo-content {
-    background: var(--dark);
-    padding: 80px 0;
-    border-top: 1px solid rgba(255, 215, 0, 0.1);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
 
 .seo-text {
     max-width: 1000px;
-    margin: 0 auto;
 }
 
-.seo-text h2 {
-    font-size: 28px;
-    color: var(--gold);
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-    line-height: 1.4;
-}
-
-.seo-text h3 {
-    font-size: 20px;
-    color: var(--text-light);
-    margin: 2.5rem 0 1rem;
-    font-weight: 600;
-}
-
-.seo-text p {
-    color: var(--text-gray);
-    font-size: 15px;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-}
-
-.seo-text strong {
-    color: var(--text-light);
-    font-weight: 600;
-}
+/* SEO text styles removed - content is hidden */
 
 /* Footer */
 .footer {
@@ -3531,23 +3511,7 @@ body::before {
         font-size: 48px;
     }
     
-    .seo-content {
-        padding: 50px 0;
-    }
-    
-    .seo-text h2 {
-        font-size: 22px;
-    }
-    
-    .seo-text h3 {
-        font-size: 18px;
-        margin: 2rem 0 0.8rem;
-    }
-    
-    .seo-text p {
-        font-size: 14px;
-        line-height: 1.7;
-    }
+    /* SEO content is hidden - no mobile styles needed */
     
     .footer-content {
         flex-direction: column;
