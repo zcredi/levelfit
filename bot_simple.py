@@ -485,9 +485,7 @@ async def process_phone(message: types.Message, state: FSMContext):
         
         # Переходим к Telegram никнейму
         text = "9️⃣ *Укажите ваш никнейм в Telegram*\n\n"
-        text += "Например: @username или username\n\n"
-        text += "Если не знаете \\- напишите: Не знаю\n"
-        text += "_Это нужно для связи, если у вас скрыт никнейм в настройках_"
+        text += "Например: @username или username"
         
         await message.answer(text, parse_mode="MarkdownV2")
         await state.set_state(QuestionnaireStates.waiting_for_telegram_nick)
