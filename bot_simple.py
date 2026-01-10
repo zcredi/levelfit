@@ -94,6 +94,8 @@ class QuestionnaireStates(StatesGroup):
     waiting_for_workouts_count = State()
     waiting_for_height = State()
     waiting_for_weight = State()
+    waiting_for_phone = State()
+    waiting_for_telegram_nick = State()
 
 # Данные о тарифах
 PLANS = {
@@ -292,7 +294,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
                 text += f"Вы выбрали цель: *{goal_name_escaped}*\n\n"
                 text += f"Давайте заполним анкету, чтобы создать идеальную программу для вас\\.\n\n"
-                text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+                text += f"📋 Всего 9 вопросов, это займёт 3\\-4 минуты\\."
                 
                 await message.answer(text, parse_mode="MarkdownV2")
                 
@@ -446,7 +448,7 @@ async def process_height(message: types.Message, state: FSMContext):
     except Exception as e:
         logger.error(f"Ошибка в process_height: {e}", exc_info=True)
 
-# Обработка веса (финальный вопрос)
+# Обработка веса
 @dp.message(QuestionnaireStates.waiting_for_weight)
 async def process_weight(message: types.Message, state: FSMContext):
     try:
@@ -455,6 +457,53 @@ async def process_weight(message: types.Message, state: FSMContext):
             return
         
         await state.update_data(weight=message.text)
+        
+        # Переходим к номеру телефона
+        text = "8️⃣ *Укажите номер телефона для связи*\n\n"
+        text += "Формат: \\+375291234567 или просто 375291234567\n"
+        text += "Это нужно для связи с тренером\\."
+        
+        await message.answer(text, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_phone)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в process_weight: {e}", exc_info=True)
+
+# Обработка номера телефона
+@dp.message(QuestionnaireStates.waiting_for_phone)
+async def process_phone(message: types.Message, state: FSMContext):
+    try:
+        phone = message.text.strip()
+        
+        # Базовая валидация номера
+        phone_digits = ''.join(filter(str.isdigit, phone))
+        if len(phone_digits) < 10:
+            await message.answer("❌ Номер телефона слишком короткий. Пожалуйста, укажите полный номер.")
+            return
+        
+        await state.update_data(phone=phone)
+        
+        # Переходим к Telegram никнейму
+        text = "9️⃣ *Укажите ваш никнейм в Telegram*\n\n"
+        text += "Например: @username или username\n\n"
+        text += "Если не знаете \\- напишите: Не знаю\n"
+        text += "_Это нужно для связи, если у вас скрыт никнейм в настройках_"
+        
+        await message.answer(text, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_telegram_nick)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в process_phone: {e}", exc_info=True)
+
+# Обработка Telegram никнейма (финальный вопрос)
+@dp.message(QuestionnaireStates.waiting_for_telegram_nick)
+async def process_telegram_nick(message: types.Message, state: FSMContext):
+    try:
+        telegram_nick = message.text.strip()
+        # Убираем @ если пользователь добавил
+        if telegram_nick.startswith('@'):
+            telegram_nick = telegram_nick[1:]
+        await state.update_data(telegram_nick=telegram_nick)
         
         # Получаем все данные
         data = await state.get_data()
@@ -475,7 +524,10 @@ async def process_weight(message: types.Message, state: FSMContext):
         workouts = escape_markdown(data.get('workouts_count', 'Не указано'))
         height = escape_markdown(data.get('height', 'Не указан'))
         weight = escape_markdown(data.get('weight', 'Не указан'))
-        username = escape_markdown(message.from_user.username or 'нет')
+        phone = escape_markdown(data.get('phone', 'Не указан'))
+        telegram_nick_manual = escape_markdown(data.get('telegram_nick', 'Не указан'))
+        username_auto = message.from_user.username or None
+        username_display = escape_markdown(username_auto if username_auto else 'скрыт в настройках')
         fullname = escape_markdown(message.from_user.full_name)
         
         channel_text = "📋 *НОВАЯ ЗАЯВКА*\n\n"
@@ -494,15 +546,20 @@ async def process_weight(message: types.Message, state: FSMContext):
         if data.get('goal'):
             channel_text += f"🎯 *Цель:* {goal}\n"
         
-        channel_text += f"⚡ *Активность:* {activity}\n"
-        channel_text += f"⚠️ *Противопоказания:* {limitations}\n"
-        channel_text += f"📊 *Опыт тренировок:* {experience}\n"
-        channel_text += f"🏋️ *Тренировок в неделю:* {workouts}\n"
-        channel_text += f"📏 *Рост:* {height} см\n"
-        channel_text += f"⚖️ *Вес:* {weight} кг\n\n"
-        channel_text += f"📱 *Telegram:* @{username}\n"
-        channel_text += f"🆔 *ID:* {message.from_user.id}\n"
-        channel_text += f"👤 *Имя в TG:* {fullname}"
+        channel_text += f"\n📊 *ПАРАМЕТРЫ:*\n"
+        channel_text += f"⚡ Активность: {activity}\n"
+        channel_text += f"⚠️ Противопоказания: {limitations}\n"
+        channel_text += f"📊 Опыт тренировок: {experience}\n"
+        channel_text += f"🏋️ Тренировок в неделю: {workouts}\n"
+        channel_text += f"📏 Рост: {height} см\n"
+        channel_text += f"⚖️ Вес: {weight} кг\n"
+        
+        channel_text += f"\n📞 *КОНТАКТЫ:*\n"
+        channel_text += f"☎️ Телефон: {phone}\n"
+        channel_text += f"📱 Telegram \\(авто\\): @{username_display}\n"
+        channel_text += f"📱 Telegram \\(указал\\): @{telegram_nick_manual}\n"
+        channel_text += f"🆔 ID: {message.from_user.id}\n"
+        channel_text += f"👤 Имя в TG: {fullname}"
         
         # Отправляем в канал
         if CHANNEL_ID:
@@ -581,7 +638,7 @@ async def process_goal_selection(callback: types.CallbackQuery, state: FSMContex
         goal_name_escaped = escape_markdown(goal_name)
         text = f"✅ Вы выбрали: *{goal_name_escaped}*\n\n"
         text += f"Отлично\\! Давайте заполним анкету\\.\n\n"
-        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+        text += f"📋 Всего 9 вопросов, это займёт 3\\-4 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
         await callback.answer()
@@ -725,7 +782,7 @@ async def process_pay_byn(callback: types.CallbackQuery, state: FSMContext):
         plan_name_escaped = escape_markdown(plan['name'])
         text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
         text += f"Отлично\\! Давайте заполним анкету для оформления\\.\n\n"
-        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+        text += f"📋 Всего 9 вопросов, это займёт 3\\-4 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
         await callback.answer()
@@ -766,7 +823,7 @@ async def process_contact(callback: types.CallbackQuery, state: FSMContext):
         plan_name_escaped = escape_markdown(plan['name'])
         text = f"✅ Тариф: {plan['emoji']} *{plan_name_escaped}* \\({price_formatted}/мес\\)\n\n"
         text += f"Отлично\\! Давайте заполним анкету, чтобы тренер мог связаться с вами\\.\n\n"
-        text += f"📋 Всего 7 вопросов, это займёт 2\\-3 минуты\\."
+        text += f"📋 Всего 9 вопросов, это займёт 3\\-4 минуты\\."
         
         await callback.message.edit_text(text, parse_mode="MarkdownV2")
         await callback.answer()
