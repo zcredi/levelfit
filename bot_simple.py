@@ -359,11 +359,16 @@ async def cmd_start(message: types.Message, state: FSMContext):
             if param in PROGRAMS:
                 # Это программа с сайта (кнопка "НАЧАТЬ ПРОГРАММУ" на programs.html)
                 program = PROGRAMS[param]
-                logger.info(f"Пользователь выбрал программу с сайта: {program['name']}")
+                logger.info(f"Пользователь выбрал программу с сайта: {program['name']} с валютой {selected_currency}")
                 
-                # Приветствие
+                # Сохраняем валюту в state еще раз для надежности
+                await state.update_data(currency=selected_currency)
+                
+                # Приветствие с названием программы
+                program_name_escaped = escape_markdown(program['name'])
                 text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
-                text += f"Отличный выбор\\!"
+                text += f"{program['emoji']} Вы выбрали: *{program_name_escaped}*\n\n"
+                text += f"Сейчас покажу детали программы\\.\\.\\."
                 
                 await message.answer(text, parse_mode="MarkdownV2")
                 
