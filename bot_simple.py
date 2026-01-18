@@ -97,17 +97,57 @@ class QuestionnaireStates(StatesGroup):
     waiting_for_phone = State()
     waiting_for_telegram_nick = State()
 
-# Данные о тарифах
-PLANS = {
-    'light': {
-        'name': 'ЛАЙТ',
-        'price': 39,
-        'old_price': 50,
-        'emoji': '🥉',
+# Данные о готовых программах
+PROGRAMS = {
+    'glutes': {
+        'name': 'Стройные ягодицы',
+        'emoji': '🍑',
+        'price': 30,
+        'description': 'Комплексная программа для проработки ягодичных мышц',
         'tribute_links': {
-            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q',
+            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
             'USD': 'https://t.me/tribute/app?startapp=sJD6'
         }
+    },
+    'fatloss': {
+        'name': 'Жиру нет',
+        'emoji': '🔥',
+        'price': 30,
+        'description': 'Эффективная программа похудения с сохранением мышц',
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
+            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+        }
+    },
+    'adaptive': {
+        'name': 'Адаптивный фитнес',
+        'emoji': '♿',
+        'price': 30,
+        'description': 'Безопасная программа для людей с ограниченными возможностями',
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
+            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+        }
+    },
+    'anabolism': {
+        'name': 'Анаболизм',
+        'emoji': '💪',
+        'price': 30,
+        'description': 'Программа максимального набора мышечной массы',
+        'tribute_links': {
+            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
+            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+        }
+    }
+}
+
+# Данные о тарифах
+PLANS = {
+    'programs': {
+        'name': 'ГОТОВЫЕ ПРОГРАММЫ',
+        'price': 30,
+        'emoji': '📦',
+        'is_programs': True  # Флаг что это готовые программы
     },
     'start': {
         'name': 'СТАРТ',
@@ -209,6 +249,41 @@ def get_plans_keyboard(currency='BYN'):
         buttons.append([InlineKeyboardButton(text=text, callback_data=f"plan_{plan_id}")])
     
     buttons.append([InlineKeyboardButton(text="◀️ Назад", callback_data="back_to_main")])
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+# Клавиатура выбора программы
+def get_programs_keyboard():
+    buttons = []
+    for program_id, program in PROGRAMS.items():
+        text = f"{program['emoji']} {program['name']}"
+        buttons.append([InlineKeyboardButton(text=text, callback_data=f"program_{program_id}")])
+    
+    buttons.append([InlineKeyboardButton(text="◀️ К тарифам", callback_data="back_to_plans")])
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+# Клавиатура для оплаты программы
+def get_program_payment_keyboard(program_id: str, currency: str = 'BYN'):
+    program = PROGRAMS.get(program_id)
+    buttons = []
+    
+    if program:
+        # Для RUB и USD - кнопка "Оплатить" ведет на Tribute
+        if currency in ['RUB', 'USD']:
+            tribute_links = program.get('tribute_links', {})
+            tribute_link = tribute_links.get(currency)
+            if tribute_link:
+                buttons.append([InlineKeyboardButton(text="💳 Оплатить", url=tribute_link)])
+        # Для BYN - кнопка "Оплатить" запускает форму
+        else:
+            buttons.append([InlineKeyboardButton(text="💳 Оплатить (BYN)", callback_data=f"pay_program_byn_{program_id}")])
+    
+    # Навигация
+    buttons.append([InlineKeyboardButton(text="◀️ К программам", callback_data="back_to_programs")])
+    buttons.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back_to_main")])
     
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
@@ -483,8 +558,15 @@ async def process_phone(message: types.Message, state: FSMContext):
         
         await state.update_data(phone=phone)
         
+        # Проверяем, это оплата программы или полная анкета
+        data = await state.get_data()
+        is_program = data.get('is_program_payment', False)
+        
         # Переходим к Telegram никнейму
-        text = "9️⃣ *Укажите ваш никнейм в Telegram*\n\n"
+        if is_program:
+            text = "2️⃣ *Укажите ваш никнейм в Telegram*\n\n"
+        else:
+            text = "9️⃣ *Укажите ваш никнейм в Telegram*\n\n"
         text += "Например: @username или username"
         
         await message.answer(text, parse_mode="MarkdownV2")
@@ -505,59 +587,84 @@ async def process_telegram_nick(message: types.Message, state: FSMContext):
         
         # Получаем все данные
         data = await state.get_data()
+        is_program = data.get('is_program_payment', False)
         
         # Формируем сообщение для пользователя
-        user_text = "✅ *Анкета заполнена\\!*\n\n"
+        user_text = "✅ *Заявка отправлена\\!*\n\n"
         user_text += "Спасибо\\! Тренер свяжется с вами в ближайшее время\\.\n\n"
-        user_text += "💪 Начинайте готовиться к трансформации\\!"
+        if is_program:
+            user_text += "📦 Скоро вы начнете программу\\!"
+        else:
+            user_text += "💪 Начинайте готовиться к трансформации\\!"
         
         await message.answer(user_text, parse_mode="MarkdownV2")
         
-        # Формируем сообщение для канала с экранированием
-        fio = escape_markdown(data.get('fio', 'Не указано'))
-        goal = escape_markdown(data.get('goal', 'Не указана'))
-        activity = escape_markdown(data.get('activity', 'Не указана'))
-        limitations = escape_markdown(data.get('limitations', 'Не указано'))
-        experience = escape_markdown(data.get('experience', 'Не указан'))
-        workouts = escape_markdown(data.get('workouts_count', 'Не указано'))
-        height = escape_markdown(data.get('height', 'Не указан'))
-        weight = escape_markdown(data.get('weight', 'Не указан'))
+        # Общие контакты
         phone = escape_markdown(data.get('phone', 'Не указан'))
         telegram_nick_manual = escape_markdown(data.get('telegram_nick', 'Не указан'))
         username_auto = message.from_user.username or None
         username_display = escape_markdown(username_auto if username_auto else 'скрыт в настройках')
         fullname = escape_markdown(message.from_user.full_name)
         
-        channel_text = "📋 *НОВАЯ ЗАЯВКА*\n\n"
-        channel_text += f"👤 *ФИО:* {fio}\n"
-        
-        # Добавляем тариф если выбран
-        if data.get('plan_name'):
-            plan_name = escape_markdown(data.get('plan_name', ''))
-            plan_price_usd = data.get('plan_price', 0)
+        # Если это заявка на программу (упрощенная)
+        if is_program:
+            program_name = escape_markdown(data.get('program_name', 'Не указана'))
+            program_emoji = data.get('program_emoji', '📦')
             currency = data.get('currency', DEFAULT_CURRENCY)
-            price_converted = convert_price(plan_price_usd, currency)
+            price_converted = convert_price(30, currency)  # Все программы по $30
             price_formatted = escape_markdown(format_price(price_converted, currency))
-            channel_text += f"💎 *Тариф:* {plan_name} \\({price_formatted}/мес\\)\n"
+            
+            channel_text = "📦 *ЗАЯВКА НА ПРОГРАММУ \\(BYN\\)*\n\n"
+            channel_text += f"{program_emoji} *Программа:* {program_name}\n"
+            channel_text += f"💰 *Цена:* {price_formatted}/мес\n"
+            channel_text += f"\n📞 *КОНТАКТЫ:*\n"
+            channel_text += f"☎️ Телефон: {phone}\n"
+            channel_text += f"📱 Telegram \\(авто\\): @{username_display}\n"
+            channel_text += f"📱 Telegram \\(указал\\): @{telegram_nick_manual}\n"
+            channel_text += f"🆔 ID: {message.from_user.id}\n"
+            channel_text += f"👤 Имя в TG: {fullname}"
         
-        # Добавляем цель если выбрана
-        if data.get('goal'):
-            channel_text += f"🎯 *Цель:* {goal}\n"
-        
-        channel_text += f"\n📊 *ПАРАМЕТРЫ:*\n"
-        channel_text += f"⚡ Активность: {activity}\n"
-        channel_text += f"⚠️ Противопоказания: {limitations}\n"
-        channel_text += f"📊 Опыт тренировок: {experience}\n"
-        channel_text += f"🏋️ Тренировок в неделю: {workouts}\n"
-        channel_text += f"📏 Рост: {height} см\n"
-        channel_text += f"⚖️ Вес: {weight} кг\n"
-        
-        channel_text += f"\n📞 *КОНТАКТЫ:*\n"
-        channel_text += f"☎️ Телефон: {phone}\n"
-        channel_text += f"📱 Telegram \\(авто\\): @{username_display}\n"
-        channel_text += f"📱 Telegram \\(указал\\): @{telegram_nick_manual}\n"
-        channel_text += f"🆔 ID: {message.from_user.id}\n"
-        channel_text += f"👤 Имя в TG: {fullname}"
+        # Иначе полная анкета
+        else:
+            fio = escape_markdown(data.get('fio', 'Не указано'))
+            goal = escape_markdown(data.get('goal', 'Не указана'))
+            activity = escape_markdown(data.get('activity', 'Не указана'))
+            limitations = escape_markdown(data.get('limitations', 'Не указано'))
+            experience = escape_markdown(data.get('experience', 'Не указан'))
+            workouts = escape_markdown(data.get('workouts_count', 'Не указано'))
+            height = escape_markdown(data.get('height', 'Не указан'))
+            weight = escape_markdown(data.get('weight', 'Не указан'))
+            
+            channel_text = "📋 *НОВАЯ ЗАЯВКА*\n\n"
+            channel_text += f"👤 *ФИО:* {fio}\n"
+            
+            # Добавляем тариф если выбран
+            if data.get('plan_name'):
+                plan_name = escape_markdown(data.get('plan_name', ''))
+                plan_price_usd = data.get('plan_price', 0)
+                currency = data.get('currency', DEFAULT_CURRENCY)
+                price_converted = convert_price(plan_price_usd, currency)
+                price_formatted = escape_markdown(format_price(price_converted, currency))
+                channel_text += f"💎 *Тариф:* {plan_name} \\({price_formatted}/мес\\)\n"
+            
+            # Добавляем цель если выбрана
+            if data.get('goal'):
+                channel_text += f"🎯 *Цель:* {goal}\n"
+            
+            channel_text += f"\n📊 *ПАРАМЕТРЫ:*\n"
+            channel_text += f"⚡ Активность: {activity}\n"
+            channel_text += f"⚠️ Противопоказания: {limitations}\n"
+            channel_text += f"📊 Опыт тренировок: {experience}\n"
+            channel_text += f"🏋️ Тренировок в неделю: {workouts}\n"
+            channel_text += f"📏 Рост: {height} см\n"
+            channel_text += f"⚖️ Вес: {weight} кг\n"
+            
+            channel_text += f"\n📞 *КОНТАКТЫ:*\n"
+            channel_text += f"☎️ Телефон: {phone}\n"
+            channel_text += f"📱 Telegram \\(авто\\): @{username_display}\n"
+            channel_text += f"📱 Telegram \\(указал\\): @{telegram_nick_manual}\n"
+            channel_text += f"🆔 ID: {message.from_user.id}\n"
+            channel_text += f"👤 Имя в TG: {fullname}"
         
         # Отправляем в канал
         if CHANNEL_ID:
@@ -568,7 +675,7 @@ async def process_telegram_nick(message: types.Message, state: FSMContext):
         await state.clear()
         
     except Exception as e:
-        logger.error(f"Ошибка в process_weight: {e}", exc_info=True)
+        logger.error(f"Ошибка в process_telegram_nick: {e}", exc_info=True)
         await message.answer("Произошла ошибка при отправке анкеты. Попробуйте снова /start")
 
 # ========== КОНЕЦ ОБРАБОТЧИКОВ АНКЕТЫ ==========
@@ -663,6 +770,21 @@ async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
             logger.error(f"Тариф {plan_id} не найден")
             return
         
+        # Если это "Готовые программы" - показываем список программ
+        if plan.get('is_programs'):
+            text = f"{plan['emoji']} *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
+            text += "📹 Видеокурсы с планами тренировок и питания\n"
+            text += "💬 Консультации в Telegram чате\n"
+            text += "📋 План остается навсегда\n\n"
+            text += f"💰 Всего *$30/месяц* за программу\n\n"
+            text += "👇 Выберите программу:"
+            
+            if isinstance(message_or_callback, types.Message):
+                await message_or_callback.answer(text, reply_markup=get_programs_keyboard(), parse_mode="MarkdownV2")
+            else:
+                await message_or_callback.message.edit_text(text, reply_markup=get_programs_keyboard(), parse_mode="MarkdownV2")
+            return
+        
         discount = int(((plan['old_price'] - plan['price']) / plan['old_price']) * 100)
         
         # Конвертируем цены
@@ -674,11 +796,7 @@ async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
         # Используем MarkdownV2 для зачеркивания
         text = f"{plan['emoji']} *{plan['name']}*\n\n"
         
-        if plan_id == 'light':
-            text += "✨ Готовая программа тренировок\n"
-            text += "💪 Варианты для зала и дома\n"
-            text += "📋 Стартовая консультация\n"
-        elif plan_id == 'start':
+        if plan_id == 'start':
             text += "✨ 2 консультации в месяц\n"
             text += "💪 Индивидуальная программа\n"
             text += "🍽 Рекомендации по питанию\n"
@@ -952,6 +1070,121 @@ async def cmd_plans(message: types.Message):
         await message.answer(text, reply_markup=get_plans_keyboard())
     except Exception as e:
         logger.error(f"Ошибка в cmd_plans: {e}", exc_info=True)
+
+
+# ========== ОБРАБОТЧИКИ ГОТОВЫХ ПРОГРАММ ==========
+
+# Обработка выбора программы
+@dp.callback_query(F.data.startswith("program_"))
+async def process_program_selection(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        program_id = callback.data.split("_")[1]  # glutes, fatloss, adaptive, anabolism
+        program = PROGRAMS.get(program_id)
+        
+        if not program:
+            await callback.answer("❌ Программа не найдена")
+            return
+        
+        logger.info(f"Выбрана программа {program['name']} пользователем {callback.from_user.id}")
+        
+        # Получаем валюту
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        
+        # Конвертируем цену
+        price_converted = convert_price(program['price'], currency)
+        formatted_price = format_price(price_converted, currency)
+        formatted_price_escaped = escape_markdown(formatted_price)
+        
+        # Формируем описание программы
+        text = f"{program['emoji']} *{escape_markdown(program['name'])}*\n\n"
+        text += f"{escape_markdown(program['description'])}\n\n"
+        text += f"💰 *Цена:* {formatted_price_escaped}/месяц\n\n"
+        text += "📦 *Что входит:*\n"
+        text += "• Видеокурс с тренировками\n"
+        text += "• План тренировок и питания\n"
+        text += "• Консультации в Telegram\n"
+        text += "• Рекомендации по спортпиту\n"
+        text += "• План остается навсегда\n\n"
+        text += "Выберите способ оплаты:"
+        
+        await callback.message.edit_text(
+            text,
+            reply_markup=get_program_payment_keyboard(program_id, currency),
+            parse_mode="MarkdownV2"
+        )
+        await callback.answer()
+        
+    except Exception as e:
+        logger.error(f"Ошибка в process_program_selection: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
+
+# Оплата программы для BYN (запрос контактов)
+@dp.callback_query(F.data.startswith("pay_program_byn_"))
+async def process_pay_program_byn(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        program_id = callback.data.split("_")[3]  # pay_program_byn_glutes -> glutes
+        program = PROGRAMS.get(program_id)
+        
+        if not program:
+            await callback.answer("❌ Ошибка")
+            return
+        
+        logger.info(f"Оплата программы BYN: {program['name']}")
+        
+        # Сохраняем программу
+        await state.update_data(
+            program_name=program['name'],
+            program_id=program_id,
+            program_price=program['price'],
+            program_emoji=program['emoji'],
+            is_program_payment=True
+        )
+        
+        # Получаем валюту
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        price_converted = convert_price(program['price'], currency)
+        price_formatted = escape_markdown(format_price(price_converted, currency))
+        
+        # Сообщение
+        program_name_escaped = escape_markdown(program['name'])
+        text = f"✅ Программа: {program['emoji']} *{program_name_escaped}*\n"
+        text += f"💰 Цена: {price_formatted}/мес\n\n"
+        text += "Для оплаты в белорусских рублях оставьте свои контакты, и тренер свяжется с вами\\.\n\n"
+        text += "📋 Это займет всего 2 минуты\\."
+        
+        await callback.message.edit_text(text, parse_mode="MarkdownV2")
+        await callback.answer()
+        
+        # Задаем первый вопрос - номер телефона
+        await asyncio.sleep(1)
+        text_q1 = "1️⃣ *Укажите номер телефона для связи*\n\n"
+        text_q1 += "Формат: \\+375291234567 или просто 375291234567"
+        await callback.message.answer(text_q1, parse_mode="MarkdownV2")
+        await state.set_state(QuestionnaireStates.waiting_for_phone)
+            
+    except Exception as e:
+        logger.error(f"Ошибка в process_pay_program_byn: {e}", exc_info=True)
+        await callback.answer("❌ Произошла ошибка")
+
+# Кнопка "Назад к программам"
+@dp.callback_query(F.data == "back_to_programs")
+async def back_to_programs(callback: types.CallbackQuery):
+    try:
+        text = f"📦 *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
+        text += "📹 Видеокурсы с планами тренировок и питания\n"
+        text += "💬 Консультации в Telegram чате\n"
+        text += "📋 План остается навсегда\n\n"
+        text += f"💰 Всего *$30/месяц* за программу\n\n"
+        text += "👇 Выберите программу:"
+        
+        await callback.message.edit_text(text, reply_markup=get_programs_keyboard(), parse_mode="MarkdownV2")
+        await callback.answer()
+    except Exception as e:
+        logger.error(f"Ошибка в back_to_programs: {e}", exc_info=True)
+
+# ========== КОНЕЦ ОБРАБОТЧИКОВ ГОТОВЫХ ПРОГРАММ ==========
 
 
 # Запуск
