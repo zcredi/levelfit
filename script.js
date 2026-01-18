@@ -142,20 +142,28 @@ const modalPrice = document.getElementById('modalPrice');
 const subscriptionForm = document.getElementById('subscriptionForm');
 const modalClose = document.querySelector('.modal-close');
 
-// Redirect to Bot on Service Button Click (Tariff Selection)
+// Redirect to Bot on Service Button Click (Tariff or Program Selection)
 document.querySelectorAll('.btn-service').forEach(button => {
     button.addEventListener('click', () => {
         const planId = button.getAttribute('data-plan');
-        const plan = plans[planId];
+        const programId = button.getAttribute('data-program');
+        const BOT_USERNAME = 'levelfitbot';
         
-        if (plan) {
-            // Get current currency
-            const currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
-            
-            // Redirect to Telegram bot with tariff and currency parameters
-            const BOT_USERNAME = 'levelfitbot';
-            const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${planId}_${currentCurrency}`;
+        // Get current currency
+        const currentCurrency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
+        
+        // If it's a program (from programs.html)
+        if (programId) {
+            const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${programId}_${currentCurrency}`;
             window.open(telegramUrl, '_blank');
+        }
+        // If it's a tariff plan (from index.html)
+        else if (planId) {
+            const plan = plans[planId];
+            if (plan) {
+                const telegramUrl = `https://t.me/${BOT_USERNAME}?start=${planId}_${currentCurrency}`;
+                window.open(telegramUrl, '_blank');
+            }
         }
     });
 });

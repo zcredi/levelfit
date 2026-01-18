@@ -146,14 +146,14 @@ PLANS = {
     'programs': {
         'name': 'ГОТОВЫЕ ПРОГРАММЫ',
         'price': 30,
-        'emoji': '📦',
+        'emoji': '⭐',
         'is_programs': True  # Флаг что это готовые программы
     },
     'start': {
         'name': 'СТАРТ',
         'price': 69,
         'old_price': 90,
-        'emoji': '🥈',
+        'emoji': '🚀',
         'tribute_links': {
             'RUB': 'https://t.me/tribute/app?startapp=sJ8R',
             'USD': 'https://t.me/tribute/app?startapp=sJD8'
@@ -355,8 +355,24 @@ async def cmd_start(message: types.Message, state: FSMContext):
             await state.update_data(currency=selected_currency)
             logger.info(f"Валюта сохранена в state: {selected_currency}")
             
-            # Проверяем, это цель с сайта или тариф
-            if param in GOALS:
+            # Проверяем, это программа, цель или тариф
+            if param in PROGRAMS:
+                # Это программа с сайта (кнопка "НАЧАТЬ ПРОГРАММУ" на programs.html)
+                program = PROGRAMS[param]
+                logger.info(f"Пользователь выбрал программу с сайта: {program['name']}")
+                
+                # Приветствие
+                text = f"🏋️ *Добро пожаловать в LEVEL FIT\\!*\n\n"
+                text += f"Отличный выбор\\!"
+                
+                await message.answer(text, parse_mode="MarkdownV2")
+                
+                # Показываем детали программы
+                await asyncio.sleep(0.5)
+                await show_program_details(message, param, selected_currency)
+                return
+                
+            elif param in GOALS:
                 # Это цель с сайта (кнопка "НАЧАТЬ ПРОГРАММУ")
                 goal_name = GOALS[param]
                 logger.info(f"Пользователь выбрал цель с сайта: {goal_name}")
@@ -614,7 +630,7 @@ async def process_telegram_nick(message: types.Message, state: FSMContext):
             price_converted = convert_price(30, currency)  # Все программы по $30
             price_formatted = escape_markdown(format_price(price_converted, currency))
             
-            channel_text = "📦 *ЗАЯВКА НА ПРОГРАММУ \\(BYN\\)*\n\n"
+            channel_text = "⭐ *ЗАЯВКА НА ПРОГРАММУ \\(BYN\\)*\n\n"
             channel_text += f"{program_emoji} *Программа:* {program_name}\n"
             channel_text += f"💰 *Цена:* {price_formatted}/мес\n"
             channel_text += f"\n📞 *КОНТАКТЫ:*\n"
@@ -772,7 +788,7 @@ async def show_plan_details(message_or_callback, plan_id: str, currency='BYN'):
         
         # Если это "Готовые программы" - показываем список программ
         if plan.get('is_programs'):
-            text = f"{plan['emoji']} *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
+            text = f"⭐ *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
             text += "📹 Видеокурсы с планами тренировок и питания\n"
             text += "💬 Консультации в Telegram чате\n"
             text += "📋 План остается навсегда\n\n"
@@ -1074,22 +1090,14 @@ async def cmd_plans(message: types.Message):
 
 # ========== ОБРАБОТЧИКИ ГОТОВЫХ ПРОГРАММ ==========
 
-# Обработка выбора программы
-@dp.callback_query(F.data.startswith("program_"))
-async def process_program_selection(callback: types.CallbackQuery, state: FSMContext):
+# Показать детали программы
+async def show_program_details(message_or_callback, program_id: str, currency='BYN'):
     try:
-        program_id = callback.data.split("_")[1]  # glutes, fatloss, adaptive, anabolism
         program = PROGRAMS.get(program_id)
         
         if not program:
-            await callback.answer("❌ Программа не найдена")
+            logger.error(f"Программа {program_id} не найдена")
             return
-        
-        logger.info(f"Выбрана программа {program['name']} пользователем {callback.from_user.id}")
-        
-        # Получаем валюту
-        data = await state.get_data()
-        currency = data.get('currency', DEFAULT_CURRENCY)
         
         # Конвертируем цену
         price_converted = convert_price(program['price'], currency)
@@ -1108,11 +1116,30 @@ async def process_program_selection(callback: types.CallbackQuery, state: FSMCon
         text += "• План остается навсегда\n\n"
         text += "Выберите способ оплаты:"
         
-        await callback.message.edit_text(
-            text,
-            reply_markup=get_program_payment_keyboard(program_id, currency),
-            parse_mode="MarkdownV2"
-        )
+        keyboard = get_program_payment_keyboard(program_id, currency)
+        
+        if isinstance(message_or_callback, types.Message):
+            await message_or_callback.answer(text, reply_markup=keyboard, parse_mode="MarkdownV2")
+            logger.info(f"Отправлены детали программы {program_id} пользователю {message_or_callback.from_user.id}")
+        else:
+            await message_or_callback.message.edit_text(text, reply_markup=keyboard, parse_mode="MarkdownV2")
+            logger.info(f"Обновлены детали программы {program_id}")
+            
+    except Exception as e:
+        logger.error(f"Ошибка в show_program_details: {e}", exc_info=True)
+
+# Обработка выбора программы
+@dp.callback_query(F.data.startswith("program_"))
+async def process_program_selection(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        program_id = callback.data.split("_")[1]  # glutes, fatloss, adaptive, anabolism
+        logger.info(f"Выбрана программа {program_id} пользователем {callback.from_user.id}")
+        
+        # Получаем валюту
+        data = await state.get_data()
+        currency = data.get('currency', DEFAULT_CURRENCY)
+        
+        await show_program_details(callback, program_id, currency)
         await callback.answer()
         
     except Exception as e:
@@ -1172,7 +1199,7 @@ async def process_pay_program_byn(callback: types.CallbackQuery, state: FSMConte
 @dp.callback_query(F.data == "back_to_programs")
 async def back_to_programs(callback: types.CallbackQuery):
     try:
-        text = f"📦 *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
+        text = f"⭐ *ГОТОВЫЕ ПРОГРАММЫ*\n\n"
         text += "📹 Видеокурсы с планами тренировок и питания\n"
         text += "💬 Консультации в Telegram чате\n"
         text += "📋 План остается навсегда\n\n"
