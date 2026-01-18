@@ -902,6 +902,7 @@ body::before {
     padding: 100px 0;
     background: var(--dark-secondary);
     position: relative;
+    overflow: visible;
 }
 
 .subscriptions-section::before {
@@ -1021,6 +1022,8 @@ body::before {
     gap: 2rem;
     position: relative;
     z-index: 1;
+    overflow: visible;
+    padding-top: 1rem;
 }
 
 .service-card {
@@ -1649,7 +1652,10 @@ body::before {
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    contain: layout style paint;
+}
+
+.subscription-card.programs-special-card {
+    overflow: visible !important;
 }
 
 .subscription-card::before {
@@ -1681,14 +1687,14 @@ body::before {
 }
 
 .subscription-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
     color: var(--gold);
     margin-bottom: 1.2rem;
     line-height: 1.2;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 0px;
 }
 
 .subscription-price-wrapper {
@@ -1809,6 +1815,59 @@ body::before {
     background: linear-gradient(145deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 100%);
     box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
     position: relative;
+}
+
+/* Programs Special Card */
+.programs-special-card {
+    background: linear-gradient(145deg, rgba(255,140,0,0.12), rgba(255,165,0,0.08)) !important;
+    border-color: rgba(255,140,0,0.3) !important;
+    position: relative;
+    overflow: visible !important;
+    margin-top: 0 !important;
+}
+
+.programs-floating-badge {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #FF8C00, #FFA500);
+    color: #0A0A0F;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0px;
+    padding: 0.7rem 2rem;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(255,140,0,0.5);
+    z-index: 100;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+}
+
+.programs-gradient-title {
+    background: linear-gradient(135deg, #FF8C00, #FFD700) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-family: 'DM Serif Display', serif !important;
+}
+
+.programs-icons-animated {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+}
+
+.program-icon-float {
+    font-size: 32px;
+    display: inline-block;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
 }
 
 .recommended-badge {

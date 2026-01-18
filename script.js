@@ -71,7 +71,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Currency Conversion Constants
-const USD_TO_BYN = 2.95;
+const USD_TO_BYN = 2.9565;
 const USD_TO_RUB = 78;
 const DEFAULT_CURRENCY = 'BYN';
 
