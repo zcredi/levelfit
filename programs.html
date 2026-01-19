@@ -370,6 +370,25 @@
     </footer>
 
     <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu-left');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu-left a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navMenu) {
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+        
         // Currency conversion
         const USD_TO_BYN = 2.9565;
         const USD_TO_RUB = 78;
@@ -452,7 +471,8 @@
             btn.addEventListener('click', () => {
                 const program = btn.getAttribute('data-program');
                 const currency = localStorage.getItem('selectedCurrency') || DEFAULT_CURRENCY;
-                window.open(`https://t.me/levelfitbot?start=program_${program}_${currency}`, '_blank');
+                // Формируем ссылку: program_currency (например, glutes_BYN)
+                window.open(`https://t.me/levelfitbot?start=${program}_${currency}`, '_blank');
             });
         });
         
@@ -466,6 +486,34 @@
         }
     </script>
     <script src="script.js" defer></script>
+    
+    <!-- Виджет живого чата (Crisp) -->
+    <script type="text/javascript">
+        var crispLoaded = false;
+        
+        function loadCrisp() {
+            if (crispLoaded) return;
+            crispLoaded = true;
+            
+            window.$crisp = [];
+            window.CRISP_WEBSITE_ID = "65e8f6a2-02db-406c-99c1-13f5d7b1b80d";
+            (function () {
+                var d = document;
+                var s = d.createElement("script");
+                s.src = "https://client.crisp.chat/l.js";
+                s.async = 1;
+                s.crossOrigin = "anonymous";
+                d.getElementsByTagName("head")[0].appendChild(s);
+            })();
+        }
+        
+        window.addEventListener('load', function() {
+            setTimeout(loadCrisp, 5000);
+            document.addEventListener('scroll', loadCrisp, { once: true });
+            document.addEventListener('click', loadCrisp, { once: true });
+            document.addEventListener('touchstart', loadCrisp, { once: true });
+        });
+    </script>
     
     <!-- Schema.org для SEO -->
     <script type="application/ld+json">

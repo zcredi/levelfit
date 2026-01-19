@@ -556,6 +556,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+        // Update programs price in card
+        document.querySelectorAll('.programs-price-display').forEach(priceElement => {
+            const usdPrice = parseFloat(priceElement.getAttribute('data-usd-price'));
+            if (usdPrice) {
+                const convertedPrice = convertPrice(usdPrice, currency);
+                priceElement.textContent = formatPrice(convertedPrice, currency);
+            }
+        });
+        
         // Save to localStorage
         localStorage.setItem('selectedCurrency', currency);
     }
