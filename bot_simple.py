@@ -105,8 +105,8 @@ PROGRAMS = {
         'price': 30,
         'description': 'Комплексная программа для проработки ягодичных мышц',
         'tribute_links': {
-            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
-            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+            'USD': 'https://t.me/tribute/app?startapp=sJD6',
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q'
         }
     },
     'fatloss': {
@@ -115,8 +115,8 @@ PROGRAMS = {
         'price': 30,
         'description': 'Эффективная программа похудения с сохранением мышц',
         'tribute_links': {
-            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
-            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+            'USD': 'https://t.me/tribute/app?startapp=sJD6',
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q'
         }
     },
     'adaptive': {
@@ -125,8 +125,8 @@ PROGRAMS = {
         'price': 30,
         'description': 'Безопасная программа для людей с ограниченными возможностями',
         'tribute_links': {
-            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
-            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+            'USD': 'https://t.me/tribute/app?startapp=sJD6',
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q'
         }
     },
     'anabolism': {
@@ -135,8 +135,8 @@ PROGRAMS = {
         'price': 30,
         'description': 'Программа максимального набора мышечной массы',
         'tribute_links': {
-            'RUB': 'https://t.me/tribute/app?startapp=sJD6',
-            'USD': 'https://t.me/tribute/app?startapp=sJD6'
+            'USD': 'https://t.me/tribute/app?startapp=sJD6',
+            'RUB': 'https://t.me/tribute/app?startapp=sJ8Q'
         }
     }
 }
