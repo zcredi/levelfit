@@ -47,11 +47,11 @@
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
             k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106064811', 'ym');
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106347765', 'ym');
 
-        ym(106064811, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        ym(106347765, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/106064811" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <noscript><div><img src="https://mc.yandex.ru/watch/106347765" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
     
     <!-- Performance optimizations -->
@@ -339,7 +339,7 @@
                             <li>Консультации в Telegram</li>
                             <li>Рекомендации по спортпиту</li>
                         </ul>
-                        <p class="subscription-value" style="background: rgba(255,140,0,0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #FF8C00;">💰 Всего <span class="programs-price-display" data-usd-price="30">89 Br</span>/месяц за программу. План остается навсегда!</p>
+                        <p class="subscription-value" style="background: rgba(255,140,0,0.1); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #FF8C00;">💰 Доступная цена: <span class="programs-price-display" data-usd-price="30">89 Br</span>/месяц за программу. План остается навсegда!</p>
                     </div>
                     <a href="programs.html" class="btn btn-service" style="background: linear-gradient(135deg, #FF8C00, #FFA500); border-color: #FF8C00;"><span>СМОТРЕТЬ ПРОГРАММЫ</span></a>
                 </div>
@@ -1393,6 +1393,7 @@
     <script type="text/javascript">
         // Откладываем загрузку Crisp до взаимодействия пользователя или через 5 секунд
         var crispLoaded = false;
+        var crispAutoOpenTimer = null;
         
         function loadCrisp() {
             if (crispLoaded) return;
@@ -1408,11 +1409,21 @@
                 s.crossOrigin = "anonymous";
                 d.getElementsByTagName("head")[0].appendChild(s);
             })();
+            
+            // После загрузки Crisp, ждем еще 5 секунд и открываем чат с сообщением
+            crispAutoOpenTimer = setTimeout(function() {
+                if (window.$crisp) {
+                    // Открываем чат
+                    $crisp.push(['do', 'chat:open']);
+                    // Отправляем приветственное сообщение (показывается как сообщение от оператора)
+                    $crisp.push(['do', 'message:show', ['text', 'Здравствуйте! 👋 Есть вопрос? Готов ответить, это бесплатно 😊']]);
+                }
+            }, 5000);
         }
         
-        // Загружаем при первом скролле, клике или через 5 секунд
+        // Загружаем при первом скролле, клике или через 2 секунды
         window.addEventListener('load', function() {
-            setTimeout(loadCrisp, 5000);
+            setTimeout(loadCrisp, 2000);
             document.addEventListener('scroll', loadCrisp, { once: true });
             document.addEventListener('click', loadCrisp, { once: true });
             document.addEventListener('touchstart', loadCrisp, { once: true });
