@@ -1412,11 +1412,14 @@
             
             // После загрузки Crisp, ждем еще 5 секунд и открываем чат с сообщением
             crispAutoOpenTimer = setTimeout(function() {
-                if (window.$crisp) {
+                // Проверяем, показывали ли уже чат в этой сессии
+                if (window.$crisp && !sessionStorage.getItem('crispAutoOpened')) {
                     // Открываем чат
                     $crisp.push(['do', 'chat:open']);
                     // Отправляем приветственное сообщение (показывается как сообщение от оператора)
                     $crisp.push(['do', 'message:show', ['text', 'Здравствуйте! 👋 Есть вопрос? Готов ответить, это бесплатно 😊']]);
+                    // Сохраняем флаг в sessionStorage (действует только до закрытия вкладки/браузера)
+                    sessionStorage.setItem('crispAutoOpened', 'true');
                 }
             }, 5000);
         }
