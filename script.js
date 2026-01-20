@@ -390,8 +390,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Telegram Bot Username
     const BOT_USERNAME = 'levelfitbot';
     
+    // FIX: Добавляем защиту от множественных кликов во время анимации
     goalCards.forEach(card => {
+        let isAnimating = false;
+        
         card.addEventListener('click', () => {
+            // Предотвращаем повторные клики во время анимации
+            if (isAnimating) return;
+            
+            isAnimating = true;
             const goalId = card.getAttribute('data-goal');
             
             // Toggle selection
@@ -415,6 +422,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     easterEggMessage.classList.remove('show');
                 }
             }
+            
+            // Разрешаем следующий клик после завершения анимации (400ms transition)
+            setTimeout(() => {
+                isAnimating = false;
+            }, 450);
         });
     });
     
